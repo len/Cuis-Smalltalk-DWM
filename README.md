@@ -4,9 +4,13 @@ Tiling window management in Cuis, very much in the spirit of dwm.suckless.org.
 Still very experimental, will change in the future as I go along using it. For now these are some keyboard shortcuts:
 
 alt-esc to toggle full screen
+
 alt-t to toggle the focused window between tiling or floating modes
+
 alt-1 to alt-9 to switch to another page
+
 alt-shift-1 to alt-shift-9 to move the focused window to another page
+
 alt-shift-B to open a browser, W open a workspace, C a changesorter, etc.
 
 Here are some screenshots:
