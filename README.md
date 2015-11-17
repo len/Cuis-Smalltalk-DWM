@@ -1,5 +1,5 @@
 # Cuis-Smalltalk-DWM
-Tiling window management in Cuis, very much in the spirit of dwm.suckless.org.
+Tiling window management in Cuis, very much in the spirit of http://dwm.suckless.org
 
 Still very experimental, will change in the future as I go along using it. For now these are some keyboard shortcuts:
 
