@@ -3,7 +3,7 @@ Tiling window management in Cuis, very much in the spirit of http://dwm.suckless
 
 Still very experimental, will change in the future as I go along using it. For now these are some keyboard shortcuts:
 
-alt-esc to toggle full screen
+alt-esc to toggle full screen on the focused window
 
 alt-t to toggle the focused window between tiling or floating modes
 
