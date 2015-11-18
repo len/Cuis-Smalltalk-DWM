@@ -21,7 +21,7 @@ Two browsers and a workspace in tiling:
 A floating browser with halos on it (windows dont have decorations or controls, but we have halos!):
 ![alt tag](https://raw.githubusercontent.com/len/Cuis-Smalltalk-DWM/master/screenshots/dwm-1.png)
 
-The pre-debugger is kind of incomplete without the title with the exception description, maybe I should show window titles on some windows?:
+The pre-debugger (halos are automatically added to new floating windows, so when the pre-debug pops up we see the exception description in the title at the bottom of the halo, this compensates for not having window titles):
 ![alt tag](https://raw.githubusercontent.com/len/Cuis-Smalltalk-DWM/master/screenshots/dwm-2.png)
 
 A browser on fullscreen:
