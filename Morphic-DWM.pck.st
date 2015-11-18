@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 1:30:03.010123 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 2:34:07.20121 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 1!
+!provides: 'Morphic-DWM' 1 2!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -182,7 +182,7 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 11/18/2015 00:01'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 11/18/2015 01:37'!
 initialize
 	super initialize.
 	windowManager _ WindowManager new.
@@ -195,7 +195,7 @@ initialize
 		(setButtonFontTo: 'DejaVu Sans Mono' 9)).
 	Preferences disable: #biggerCursors.
 	Preferences enable: #dismissAllOnOptionClose.
-	StrikeFont useLeftArrow.
+	"StrikeFont useLeftArrow."
 
 	Preferences installHaloSpecsFromArray: self iconicHaloSpecifications.
 	
