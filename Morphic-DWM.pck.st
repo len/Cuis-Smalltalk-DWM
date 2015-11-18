@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 3:17:57.95674 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 7:18:12.150599 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 4!
+!provides: 'Morphic-DWM' 1 5!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -138,11 +138,11 @@ buttonColorFrom: paneColor
 buttonLabel
 	^ Color black! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 00:42'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 06:39'!
 changeSorter
-	^ Color lightBlue! !
+	^ Color lightBlue lighter duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/17/2015 01:03'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 07:14'!
 debugger
 	^Color red! !
 
@@ -235,6 +235,10 @@ menuTitleBar
 minimalWindows
 	^true! !
 
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 06:38'!
+packageList
+	^ Color lightOrange lighter duller! !
+
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:25'!
 paneBackgroundFrom: aColor
 	^ Color black! !
@@ -326,12 +330,12 @@ windowOpen: aSystemWindow
 addWindow: aSystemWindow
 	currentPage windowOpen: aSystemWindow! !
 
-!WindowManager methodsFor: 'initialization' stamp: 'len 11/16/2015 15:03'!
+!WindowManager methodsFor: 'initialization' stamp: 'len 11/18/2015 07:15'!
 initialize
-	pages _ (1 to: 9) collect: [:each | WindowManagerPage new].
+	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
 	currentPage _ pages first! !
 
-!WindowManager methodsFor: 'events' stamp: 'len 11/17/2015 02:19'!
+!WindowManager methodsFor: 'events' stamp: 'len 11/18/2015 06:57'!
 keyStroke: aKeyboardEvent morph: aMorph
 	| i |
 	aKeyboardEvent controlKeyPressed ifTrue: [^false].
@@ -344,16 +348,16 @@ keyStroke: aKeyboardEvent morph: aMorph
 	aKeyboardEvent keyValue = $t asciiValue
 		ifTrue: [aMorph owningWindow ifNotNil: [ :w | currentPage windowToggleTiling: w. ^true ]].
 
-	(aKeyboardEvent keyValue between: $1 asciiValue and: $9 asciiValue)
+	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
 		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
-	(i _ #(33 64 35 36 37 94 38 42 40 41) indexOf: aKeyboardEvent keyValue) > 0
+	(i _ #(33 64 35 36 37 94 38 42 40) indexOf: aKeyboardEvent keyValue) > 0
 		ifTrue: [aMorph owningWindow ifNotNil: [ :w | self moveWindow: w toPage: i. ^true ]].
 
 	"open new windows"
 	aKeyboardEvent keyValue = $B asciiValue
 		ifTrue: [BrowserWindow openBrowser. ^true].
 	aKeyboardEvent keyValue = $W asciiValue
-		ifTrue: [Workspace new contents: ''; openLabel: 'Worksspace'. ^true].
+		ifTrue: [Workspace new contents: ''; openLabel: 'Workspace'. ^true].
 	aKeyboardEvent keyValue = $T asciiValue
 		ifTrue: [TranscriptWindow openTranscript. ^true].
 	aKeyboardEvent keyValue = $P asciiValue
@@ -362,6 +366,8 @@ keyStroke: aKeyboardEvent morph: aMorph
 		ifTrue: [FileListWindow openFileList. ^true].
 	aKeyboardEvent keyValue = $C asciiValue
 		ifTrue: [ChangeSorterWindow open: ChangeSorter new label: nil. ^true].
+	aKeyboardEvent keyValue = $R asciiValue
+		ifTrue: [TestRunnerWindow openTestRunner. ^true].
 
 	^ false! !
 
