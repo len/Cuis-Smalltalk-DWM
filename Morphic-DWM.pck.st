@@ -1,4 +1,4 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2580] on 17 November 2015 at 6:12:31.151194 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 1:30:03.010123 am'!
 'Description Please enter a description for this package'!
 !provides: 'Morphic-DWM' 1 1!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
@@ -13,7 +13,7 @@ WindowStackMorph class
 
 !classDefinition: #WindowTilingMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowTilingMorph
-	instanceVariableNames: 'mainWindow stack dirty'
+	instanceVariableNames: 'mainWindow stack'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
@@ -21,14 +21,14 @@ LayoutMorph subclass: #WindowTilingMorph
 WindowTilingMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #MinimalTheme category: #'Morphic-DWM'!
-Theme subclass: #MinimalTheme
+!classDefinition: #DWMTheme category: #'Morphic-DWM'!
+Theme subclass: #DWMTheme
 	instanceVariableNames: 'windowManager'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'MinimalTheme class' category: #'Morphic-DWM'!
-MinimalTheme class
+!classDefinition: 'DWMTheme class' category: #'Morphic-DWM'!
+DWMTheme class
 	instanceVariableNames: ''!
 
 !classDefinition: #WindowManager category: #'Morphic-DWM'!
@@ -126,39 +126,63 @@ removedMorph: aMorph
 		ifTrue: [mainWindow _ nil]
 		ifFalse: [aMorph == stack ifTrue: [stack _ nil]]! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:23'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:23'!
 background
 	^ Color black! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/17/2015 04:53'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 04:53'!
 buttonColorFrom: paneColor
 	^ paneColor! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:27'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:45'!
 buttonLabel
-	^ Color white! !
+	^ Color black! !
 
-!MinimalTheme methodsFor: 'tool colors' stamp: 'len 11/17/2015 01:03'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 00:42'!
+changeSorter
+	^ Color lightBlue! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/17/2015 01:03'!
 debugger
 	^Color red! !
 
-!MinimalTheme methodsFor: 'tool colors' stamp: 'len 11/16/2015 02:16'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/16/2015 02:16'!
 defaultWindowColor
 	^ Color gray darker! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
 embossedTitles
 	^false! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/17/2015 05:09'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:11'!
 focusIndicator
 	^ self textHighlight lighter! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/16/2015 01:23'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 01:23'!
 fullScreenDeskMargin
 	^ 0! !
 
-!MinimalTheme methodsFor: 'initialization' stamp: 'len 11/16/2015 15:48'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 11/17/2015 22:57'!
+iconicHaloSpecifications
+
+^ #(
+	"selector						horiz				vert					color info						icon key 						balloon help
+	 ---------						------				-----------			-------------------------------		---------------"
+	(addDebugHandle:			right				topCenter		(orange)						haloDebugIcon 				'Debug')
+	(addDismissHandle:			left				top				(red)							haloDismissIcon 				'Remove')
+"	(addRotateHandle:			left				bottom			(blue)							haloRotateIcon 				'Rotate')"
+	(addMenuHandle:			leftCenter		top				(blue lighter)					haloMenuIcon 				'Menu')
+	(addGrabHandle:				center			top				(black)							haloGrabIcon 				'Pick up')
+	(addDragHandle:				rightCenter		top				(brown)						haloDragIcon 				'Move')
+"	(addDupHandle:				right				top				(green)						haloDuplicateIcon 			'Duplicate')	"
+"	(addHelpHandle:				center			bottom			(lightBlue)					haloHelpIcon 				'Help')"
+	(addGrowHandle:			right				bottom			(yellow)						haloScaleIcon 				'Change size')
+	(addFontSizeHandle:		leftCenter		bottom			(lightGreen)					haloFontSizeIcon 			'Change font')
+	(addFontEmphHandle:		rightCenter		bottom			(lightBrown darker)			haloFontEmphasisIcon 		'Emphasis & alignment')
+"	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
+)! !
+
+!DWMTheme methodsFor: 'initialization' stamp: 'len 11/18/2015 00:01'!
 initialize
 	super initialize.
 	windowManager _ WindowManager new.
@@ -170,77 +194,84 @@ initialize
 		(setCodeFontTo: 'DejaVu Sans Mono' 10)
 		(setButtonFontTo: 'DejaVu Sans Mono' 9)).
 	Preferences disable: #biggerCursors.
+	Preferences enable: #dismissAllOnOptionClose.
 	StrikeFont useLeftArrow.
 
+	Preferences installHaloSpecsFromArray: self iconicHaloSpecifications.
+	
 	Smalltalk garbageCollect.
-	SystemWindow allSubInstances do: [:each|each isInWorld ifTrue: [windowManager windowOpen: each]]! !
+	SystemWindow allSubInstances do: [:each|each isInWorld ifTrue: [windowManager addWindow: each]]! !
 
-!MinimalTheme methodsFor: 'keyboard shortcuts' stamp: 'len 11/16/2015 15:31'!
+!DWMTheme methodsFor: 'keyboard shortcuts' stamp: 'len 11/16/2015 15:31'!
 keyStroke: aKeyboardEvent morph: aMorph
 		^windowManager keyStroke: aKeyboardEvent morph: aMorph! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/14/2015 03:38'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/14/2015 03:38'!
 layoutAdjusterThickness
 	^ 1! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:55'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:55'!
 listMultiHighlightFocused: aBoolean
 	^ (self listHighlightFocused: aBoolean) 
 		adjustSaturation: 0.0 brightness: 0.15! !
 
-!MinimalTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
 menu
 	^ Color darkGray darker darker! !
 
-!MinimalTheme methodsFor: 'menus' stamp: 'len 11/16/2015 02:37'!
+!DWMTheme methodsFor: 'menus' stamp: 'len 11/16/2015 02:37'!
 menuDecorations
 	^ Dictionary new! !
 
-!MinimalTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
 menuText
 	^ Color white! !
 
-!MinimalTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:59'!
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:59'!
 menuTitleBar
 	^ self menu darker! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:25'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:25'!
 minimalWindows
 	^true! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:25'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:25'!
 paneBackgroundFrom: aColor
 	^ Color black! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:15'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:15'!
 roundButtons
 	^ false! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:15'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:15'!
 roundWindowCorners
 	^ false! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:39'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:39'!
 scrollbarButtonColor
 	^Color black! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:36'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:58'!
+scrollbarColor
+	^ Color black! !
+
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:36'!
 scrollbarSliderShadowColor
 	^Color black! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/14/2015 04:29'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/14/2015 04:29'!
 scrollbarThickness
 	^ 6! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/16/2015 03:32'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:42'!
 shout
 	^ {
 		#defaults 				-> #white.
-		#undefined 				-> #(cyan lighter).
+		#undefined 				-> #(lightOrange lighter).
 		#methodTags 			-> #(gray lighter).
-		#pseudoVariables 		-> #(orange).
+		#pseudoVariables 		-> #(pink).
 		#messages 				-> #(white).
-		#arguments 				-> #(yellow).
+		#arguments 				-> #(lightYellow lighter).
 		#instVar 					-> #(lightBlue).
 		#incompleteMessages -> #(white darker).
 		#blockLevelFour 		-> #(magenta).
@@ -251,45 +282,49 @@ shout
 		#tempVars 				-> #(gray muchLighter).
 	}! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:57'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:57'!
 text
 	^ Color white! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/17/2015 04:44'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:10'!
 textCursor
-	^ self focusIndicator lighter! !
+	^ Color white! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/17/2015 05:14'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 22:41'!
 textHighlight
-	^ Color r: 0.2 g: 0.35 b: 0.45! !
+	^ Color darkGray "Color r: 0.2 g: 0.35 b: 0.45"! !
 
-!MinimalTheme methodsFor: 'widget colors' stamp: 'len 11/13/2015 19:11'!
+!DWMTheme methodsFor: 'widget colors' stamp: 'len 11/13/2015 19:11'!
 textPane
 	^ Color black! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:34'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:34'!
 unfocusedTextHighlightFrom: aColor
 	^aColor adjustSaturation: 0.0 brightness: -0.15! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:10'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:10'!
 useTaskbar
 	^false! !
 
-!MinimalTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:31'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/17/2015 22:36'!
 useUniformColors
-	^true! !
+	^false! !
 
-!MinimalTheme methodsFor: 'window management' stamp: 'len 11/16/2015 15:31'!
+!DWMTheme methodsFor: 'window management' stamp: 'len 11/16/2015 15:31'!
 windowClosed: aSystemWindow
 	windowManager windowClosed: aSystemWindow! !
 
-!MinimalTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:58'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:58'!
 windowLabel
 	^ Color white! !
 
-!MinimalTheme methodsFor: 'window management' stamp: 'len 11/16/2015 15:31'!
+!DWMTheme methodsFor: 'window management' stamp: 'len 11/16/2015 15:31'!
 windowOpen: aSystemWindow
 	windowManager windowOpen: aSystemWindow! !
+
+!WindowManager methodsFor: 'initialization' stamp: 'len 11/17/2015 23:02'!
+addWindow: aSystemWindow
+	currentPage windowOpen: aSystemWindow! !
 
 !WindowManager methodsFor: 'initialization' stamp: 'len 11/16/2015 15:03'!
 initialize
@@ -330,7 +365,7 @@ keyStroke: aKeyboardEvent morph: aMorph
 
 	^ false! !
 
-!WindowManager methodsFor: 'actions' stamp: 'len 11/16/2015 16:23'!
+!WindowManager methodsFor: 'actions' stamp: 'len 11/17/2015 22:46'!
 moveWindow: aSystemWindow toPage: anInteger
 	| newPage |
 	newPage _ pages at: anInteger.
@@ -338,6 +373,7 @@ moveWindow: aSystemWindow toPage: anInteger
 	(aSystemWindow hasProperty: #floatingBounds) ifTrue: [^ self].
 
 	currentPage windowClosed: aSystemWindow.
+	aSystemWindow removeHalo.
 	aSystemWindow visible: false.
 	newPage windowOpen: aSystemWindow! !
 
@@ -356,22 +392,23 @@ switchToPage: anInteger
 	currentPage _ newPage.
 	currentPage show! !
 
-!WindowManager methodsFor: 'events' stamp: 'len 11/16/2015 14:47'!
+!WindowManager methodsFor: 'events' stamp: 'len 11/17/2015 22:23'!
 windowClosed: aSystemWindow
 	currentPage windowClosed: aSystemWindow! !
 
-!WindowManager methodsFor: 'events' stamp: 'len 11/16/2015 14:47'!
+!WindowManager methodsFor: 'events' stamp: 'len 11/17/2015 17:30'!
 windowOpen: aSystemWindow
-	currentPage windowOpen: aSystemWindow! !
+	currentPage windowOpen: aSystemWindow.
+	aSystemWindow addHalo! !
 
 !WindowManager class methodsFor: 'as yet unclassified' stamp: 'len 11/16/2015 15:01'!
 new
 	^ super new initialize! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 11/17/2015 02:48'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 11/17/2015 22:46'!
 hide
 	tilingMorph notNil ifTrue: [tilingMorph visible: false].
-	windows do: [:each | each isReallyVisible ifTrue: [each visible: false]]! !
+	windows do: [:each | each isReallyVisible ifTrue: [each removeHalo; visible: false]]! !
 
 !WindowManagerPage methodsFor: 'initialization' stamp: 'len 11/16/2015 15:00'!
 initialize
@@ -395,9 +432,9 @@ show
 	tilingMorph notNil ifTrue: [tilingMorph visible: true].
 	windows do: [:each | each visible ifFalse: [each visible: true]]! !
 
-!WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 02:28'!
+!WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 23:05'!
 windowClosed: aSystemWindow
-	windows remove: aSystemWindow.
+	windows remove: aSystemWindow ifAbsent: [].
 	self refresh! !
 
 !WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 02:28'!
@@ -405,10 +442,11 @@ windowOpen: aSystemWindow
 	windows add: aSystemWindow.
 	self refresh! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 11/16/2015 16:19'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 11/17/2015 22:46'!
 windowToggleTiling: aSystemWindow
 	| possibleBounds |
 	aSystemWindow isInWorld ifFalse: [^ self].
+	aSystemWindow removeHalo.
 	tilingMorph isNil
 		ifTrue:
 			[tilingMorph _ WindowTilingMorph newRow.
