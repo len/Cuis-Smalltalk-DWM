@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 2:34:07.20121 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 3:17:57.95674 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 2!
+!provides: 'Morphic-DWM' 1 4!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -52,15 +52,10 @@ WindowManagerPage class
 	instanceVariableNames: ''!
 
 
-!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:58'!
-addMorphBack: aMorph
+!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:14'!
+privateAddMorph: aMorph atIndex: anInteger
 	aMorph owner == self ifTrue: [^ self].
-	^ super addMorphBack: aMorph! !
-
-!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 04:30'!
-addMorphFront: aMorph
-	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the current order) when clicking on them"
-	^ super addMorphFront: aMorph! !
+	super privateAddMorph: aMorph atIndex: anInteger! !
 
 !WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:57'!
 removedMorph: aMorph
@@ -93,6 +88,11 @@ popWindow
 	mainWindow isNil ifTrue: [^ self removeStack].
 	self addMorphBack: mainWindow.
 	stack hasSubmorphs ifFalse: [self removeStack]! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:15'!
+privateAddMorph: aMorph atIndex: anInteger
+	aMorph owner == self ifTrue: [^ self].
+	super privateAddMorph: aMorph atIndex: anInteger! !
 
 !WindowTilingMorph methodsFor: 'private' stamp: 'len 11/17/2015 03:35'!
 pushWindow
@@ -263,23 +263,23 @@ scrollbarSliderShadowColor
 scrollbarThickness
 	^ 6! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:42'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 11/18/2015 02:43'!
 shout
 	^ {
 		#defaults 				-> #white.
-		#undefined 				-> #(lightOrange lighter).
+		#undefined 				-> #(gray muchLighter).
 		#methodTags 			-> #(gray lighter).
 		#pseudoVariables 		-> #(pink).
 		#messages 				-> #(white).
 		#arguments 				-> #(lightYellow lighter).
-		#instVar 					-> #(lightBlue).
-		#incompleteMessages -> #(white darker).
+		#instVar 				-> #(lightBlue).
+		#incompleteMessages	-> #(white darker).
 		#blockLevelFour 		-> #(magenta).
 		#blockLevelFive 		-> #(orange negated).
-		#blockLevelSix 			-> #(green).
+		#blockLevelSix 		-> #(green).
 		#blockLevelSeven 		-> #blue.
-		#tempBar 				-> #(gray veryMuchLighter lighter).
-		#tempVars 				-> #(gray muchLighter).
+		#tempBar 				-> #(lightGray).
+		#tempVars 				-> #(lightGreen lighter).
 	}! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:57'!
