@@ -7,6 +7,8 @@ alt-esc to toggle the focused (floating) window to/from full screen mode
 
 alt-t to toggle the focused window between tiling or floating modes
 
+alt-w to close a window
+
 alt-1 to alt-8 to switch to another page
 
 alt-shift-1 to alt-shift-8 to move the focused window to another page
