@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2583] on 18 November 2015 at 7:18:12.150599 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2592] on 19 November 2015 at 12:10:49.696715 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 5!
+!provides: 'Morphic-DWM' 1 6!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -335,13 +335,13 @@ initialize
 	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
 	currentPage _ pages first! !
 
-!WindowManager methodsFor: 'events' stamp: 'len 11/18/2015 06:57'!
+!WindowManager methodsFor: 'events' stamp: 'len 11/19/2015 00:07'!
 keyStroke: aKeyboardEvent morph: aMorph
 	| i |
 	aKeyboardEvent controlKeyPressed ifTrue: [^false].
 	aKeyboardEvent commandAltKeyPressed ifFalse: [^false].
 
-	aKeyboardEvent keyValue = $x asciiValue
+	aKeyboardEvent keyValue = $w asciiValue
 		ifTrue: [aMorph owningWindow ifNotNil: [ :w | w delete. ^true ]].
 	aKeyboardEvent keyValue = 27
 		ifTrue: [aMorph owningWindow ifNotNil: [ :w | w fullScreen. ^true ]].
