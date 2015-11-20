@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2592] on 19 November 2015 at 12:10:49.696715 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2592] on 20 November 2015 at 7:06:51.107691 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 6!
+!provides: 'Morphic-DWM' 1 7!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -52,6 +52,18 @@ WindowManagerPage class
 	instanceVariableNames: ''!
 
 
+!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 11/19/2015 07:44'!
+quit
+	^ self snapshot: false andQuit: true clearAllClassState: false! !
+
+!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 11/19/2015 07:42'!
+save
+	^ self snapshot: true andQuit: false clearAllClassState: false! !
+
+!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 11/19/2015 07:42'!
+saveAndQuit
+	^ self snapshot: true andQuit: true clearAllClassState: false! !
+
 !WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:14'!
 privateAddMorph: aMorph atIndex: anInteger
 	aMorph owner == self ifTrue: [^ self].
@@ -79,6 +91,11 @@ addWindow: aSystemWindow
 	self addMorphBack: aSystemWindow.
 	mainWindow notNil ifTrue: [self pushWindow].
 	mainWindow _ aSystemWindow.! !
+
+!WindowTilingMorph methodsFor: 'initialization' stamp: 'len 11/19/2015 07:24'!
+initialize
+	super initialize.
+	self sticky: true! !
 
 !WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 13:45'!
 popWindow
