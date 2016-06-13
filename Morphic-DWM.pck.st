@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2592] on 20 November 2015 at 7:06:51.107691 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2794] on 13 June 2016 at 5:12:50.791673 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 7!
+!provides: 'Morphic-DWM' 1 12!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -75,6 +75,10 @@ removedMorph: aMorph
 "	owner notNil ifTrue: [owner stackChanged]."
 	self layoutSubmorphs! !
 
+!WindowStackMorph methodsFor: 'halos and balloon help' stamp: 'len 6/12/2016 09:47'!
+skipsHalo
+	^ true! !
+
 !WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:58'!
 addMorphBack: aMorph
 	aMorph owner == self ifTrue: [^ self].
@@ -143,6 +147,14 @@ removedMorph: aMorph
 		ifTrue: [mainWindow _ nil]
 		ifFalse: [aMorph == stack ifTrue: [stack _ nil]]! !
 
+!WindowTilingMorph methodsFor: 'halos and balloon help' stamp: 'len 6/12/2016 09:48'!
+skipsHalo
+	^ true! !
+
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:58'!
+acceptButton
+	^ self successColor! !
+
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:23'!
 background
 	^ Color black! !
@@ -155,13 +167,17 @@ buttonColorFrom: paneColor
 buttonLabel
 	^ Color black! !
 
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:58'!
+cancelButton
+	^ self errorColor! !
+
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 06:39'!
 changeSorter
 	^ Color lightBlue lighter duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 07:14'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 6/9/2016 00:06'!
 debugger
-	^Color red! !
+	^ Color lightRed! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 11/16/2015 02:16'!
 defaultWindowColor
@@ -170,6 +186,14 @@ defaultWindowColor
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
 embossedTitles
 	^false! !
+
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:51'!
+errorColor
+	^ Color lightRed! !
+
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 18:01'!
+failureColor
+	^ Color yellow duller! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:11'!
 focusIndicator
@@ -199,7 +223,7 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 11/18/2015 01:37'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 6/8/2016 01:42'!
 initialize
 	super initialize.
 	windowManager _ WindowManager new.
@@ -212,6 +236,11 @@ initialize
 		(setButtonFontTo: 'DejaVu Sans Mono' 9)).
 	Preferences disable: #biggerCursors.
 	Preferences enable: #dismissAllOnOptionClose.
+	Preferences enable: #subPixelRenderColorFonts.
+	Preferences disable: #italicsInShout.
+
+	SHTextStylerST80 initialize.
+
 	"StrikeFont useLeftArrow."
 
 	Preferences installHaloSpecsFromArray: self iconicHaloSpecifications.
@@ -284,24 +313,41 @@ scrollbarSliderShadowColor
 scrollbarThickness
 	^ 6! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/18/2015 02:43'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/10/2016 23:40'!
 shout
 	^ {
 		#defaults 				-> #white.
-		#undefined 				-> #(gray muchLighter).
-		#methodTags 			-> #(gray lighter).
-		#pseudoVariables 		-> #(pink).
+		#undefined 				-> #(lightRed lighter4).
+		#comment 				-> #(lightGray lighter).
+		#literals 				-> #(lightBlue lighter2).
+		#pseudoVariables 		-> #(darkPink lighter4). "and bold"
 		#messages 				-> #(white).
+		#incompleteMessages	-> #(white).
 		#arguments 				-> #(lightYellow lighter).
-		#instVar 				-> #(lightBlue).
-		#incompleteMessages	-> #(white darker).
-		#blockLevelFour 		-> #(magenta).
-		#blockLevelFive 		-> #(orange negated).
-		#blockLevelSix 		-> #(green).
-		#blockLevelSeven 		-> #blue.
-		#tempBar 				-> #(lightGray).
-		#tempVars 				-> #(lightGreen lighter).
-	}! !
+		#instVar 				-> #(skyBlue lighter4).
+		#classVar 				-> #(skyBlue lighter4). "but bold"
+		#tempBar 				-> #(white darker).
+		#tempVars 				-> #(beige).
+		#blockTemps				-> #(seaGreen lighter).
+		#block 					-> #(white).
+		#blockLevelOne 		-> #(red muchLighter).
+		#blockLevelTwo 		-> #(yellow muchLighter).
+		#blockLevelThree 		-> #(green muchLighter).
+		#blockLevelFour 		-> #(blue muchLighter).
+		#blockLevelFive 		-> #(white darker).
+		#blockLevelSix 		-> #(white darker).
+		#blockLevelSeven 		-> #(white darker).
+		#methodTags 			-> #(hotPink).
+	}
+	
+"
+		SHTextStylerST80 initialize
+" 
+! !
+
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:57'!
+successColor
+	^ Color lightGreen duller! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:57'!
 text
@@ -352,7 +398,7 @@ initialize
 	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
 	currentPage _ pages first! !
 
-!WindowManager methodsFor: 'events' stamp: 'len 11/19/2015 00:07'!
+!WindowManager methodsFor: 'events' stamp: 'len 4/5/2016 18:48'!
 keyStroke: aKeyboardEvent morph: aMorph
 	| i |
 	aKeyboardEvent controlKeyPressed ifTrue: [^false].
@@ -367,7 +413,7 @@ keyStroke: aKeyboardEvent morph: aMorph
 
 	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
 		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
-	(i _ #(33 64 35 36 37 94 38 42 40) indexOf: aKeyboardEvent keyValue) > 0
+	(i _ #(33 64 35 36 37 94 38 42) indexOf: aKeyboardEvent keyValue) > 0
 		ifTrue: [aMorph owningWindow ifNotNil: [ :w | self moveWindow: w toPage: i. ^true ]].
 
 	"open new windows"
@@ -385,7 +431,8 @@ keyStroke: aKeyboardEvent morph: aMorph
 		ifTrue: [ChangeSorterWindow open: ChangeSorter new label: nil. ^true].
 	aKeyboardEvent keyValue = $R asciiValue
 		ifTrue: [TestRunnerWindow openTestRunner. ^true].
-
+	aKeyboardEvent keyValue = $M asciiValue
+		ifTrue: [MessageNamesWindow open: MessageNames new label: 'Message Names'].
 	^ false! !
 
 !WindowManager methodsFor: 'actions' stamp: 'len 11/17/2015 22:46'!
@@ -406,7 +453,7 @@ printOn: aStream
 	(1 to: pages size) do: [:i | aStream print: i; nextPut: $:; print: (pages at: i)] separatedBy: [aStream space].
 	aStream nextPutAll: ' current: '; print: (pages indexOf: currentPage)! !
 
-!WindowManager methodsFor: 'actions' stamp: 'len 11/16/2015 15:42'!
+!WindowManager methodsFor: 'actions' stamp: 'len 6/11/2016 05:14'!
 switchToPage: anInteger
 	| newPage |
 	newPage _ pages at: anInteger.
@@ -424,11 +471,11 @@ windowOpen: aSystemWindow
 	currentPage windowOpen: aSystemWindow.
 	aSystemWindow addHalo! !
 
-!WindowManager class methodsFor: 'as yet unclassified' stamp: 'len 11/16/2015 15:01'!
+!WindowManager class methodsFor: 'instance creation' stamp: 'len 11/16/2015 15:01'!
 new
 	^ super new initialize! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 11/17/2015 22:46'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 6/11/2016 05:13'!
 hide
 	tilingMorph notNil ifTrue: [tilingMorph visible: false].
 	windows do: [:each | each isReallyVisible ifTrue: [each removeHalo; visible: false]]! !
@@ -487,6 +534,6 @@ windowToggleTiling: aSystemWindow
 	tilingMorph refresh.
 	tilingMorph hasSubmorphs ifFalse: [tilingMorph delete. tilingMorph _ nil]! !
 
-!WindowManagerPage class methodsFor: 'as yet unclassified' stamp: 'len 11/16/2015 15:01'!
+!WindowManagerPage class methodsFor: 'instance creation' stamp: 'len 11/16/2015 15:01'!
 new
 	^ super new initialize! !
