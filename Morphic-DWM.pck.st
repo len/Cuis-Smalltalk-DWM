@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2794] on 13 June 2016 at 5:12:50.791673 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2794] on 18 June 2016 at 5:21:09.624933 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 12!
+!provides: 'Morphic-DWM' 1 13!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -223,17 +223,22 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 6/8/2016 01:42'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 6/15/2016 23:55'!
 initialize
+	| family codeFamily |
 	super initialize.
 	windowManager _ WindowManager new.
-	Preferences setDefaultFonts: #(
-		(setSystemFontTo: 'DejaVu Sans Mono' 10)
-		(setListFontTo: 'DejaVu Sans Mono' 10)
-		(setMenuFontTo: 'DejaVu Sans Mono' 9)
-		(setWindowTitleFontTo: 'DejaVu Sans Mono' 10)
-		(setCodeFontTo: 'DejaVu Sans Mono' 10)
-		(setButtonFontTo: 'DejaVu Sans Mono' 9)).
+	family _ 'DejaVu Sans Mono'.
+	codeFamily _ 'DejaVu Sans Mono'.
+	Preferences setDefaultFonts: {
+		{#setSystemFontTo:. family. 10}.
+		{#setListFontTo:. family. 10}.
+		{#setMenuFontTo:. family. 9}.
+		{#setWindowTitleFontTo:. family. 10}.
+		{#setCodeFontTo:. codeFamily. 10}.
+		{#setButtonFontTo:. family. 9}}.
+
+	StrikeFont build
 	Preferences disable: #biggerCursors.
 	Preferences enable: #dismissAllOnOptionClose.
 	Preferences enable: #subPixelRenderColorFonts.
