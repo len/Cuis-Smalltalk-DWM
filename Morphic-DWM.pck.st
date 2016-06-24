@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2794] on 18 June 2016 at 5:21:09.624933 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2794] on 24 June 2016 at 6:20:43.204018 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 13!
+!provides: 'Morphic-DWM' 1 15!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -223,7 +223,7 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 6/15/2016 23:55'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 6/24/2016 06:16'!
 initialize
 	| family codeFamily |
 	super initialize.
@@ -238,11 +238,11 @@ initialize
 		{#setCodeFontTo:. codeFamily. 10}.
 		{#setButtonFontTo:. family. 9}}.
 
-	StrikeFont build
 	Preferences disable: #biggerCursors.
 	Preferences enable: #dismissAllOnOptionClose.
 	Preferences enable: #subPixelRenderColorFonts.
 	Preferences disable: #italicsInShout.
+"   Preferences disable: #shoutInWorkspaces."
 
 	SHTextStylerST80 initialize.
 
@@ -318,19 +318,19 @@ scrollbarSliderShadowColor
 scrollbarThickness
 	^ 6! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 6/10/2016 23:40'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/24/2016 06:20'!
 shout
 	^ {
 		#defaults 				-> #white.
-		#undefined 				-> #(lightRed lighter4).
+		#undefined 				-> #(lightRed lighter lighter lighter lighter).
 		#comment 				-> #(lightGray lighter).
-		#literals 				-> #(lightBlue lighter2).
-		#pseudoVariables 		-> #(darkPink lighter4). "and bold"
+		#literals 				-> #(lightBlue lighter lighter).
+		#pseudoVariables 		-> #(darkPink lighter lighter lighter lighter). "and bold"
 		#messages 				-> #(white).
 		#incompleteMessages	-> #(white).
 		#arguments 				-> #(lightYellow lighter).
-		#instVar 				-> #(skyBlue lighter4).
-		#classVar 				-> #(skyBlue lighter4). "but bold"
+		#instVar 				-> #(skyBlue lighter lighter lighter lighter).
+		#classVar 				-> #(skyBlue lighter lighter lighter lighter). "but bold"
 		#tempBar 				-> #(white darker).
 		#tempVars 				-> #(beige).
 		#blockTemps				-> #(seaGreen lighter).
@@ -342,7 +342,7 @@ shout
 		#blockLevelFive 		-> #(white darker).
 		#blockLevelSix 		-> #(white darker).
 		#blockLevelSeven 		-> #(white darker).
-		#methodTags 			-> #(hotPink).
+		#methodTags 			-> #(lightGray lighter). "#(hotPink)"
 	}
 	
 "
