@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2794] on 24 June 2016 at 6:20:43.204018 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2835] on 25 June 2016 at 8:29:22.199488 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 15!
+!provides: 'Morphic-DWM' 1 17!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -223,11 +223,16 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 6/24/2016 06:16'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 6/25/2016 08:29'!
 initialize
 	| family codeFamily |
 	super initialize.
 	windowManager _ WindowManager new.
+" install fonts, manually remove 'DejaVu' and make a new 'DejaVu' that points to 'DejaVu Sans'
+StrikeFont install: 'DejaVu Sans Mono'.
+StrikeFont install: 'DejaVu Sans'.
+StrikeFont buildMathFont
+"
 	family _ 'DejaVu Sans Mono'.
 	codeFamily _ 'DejaVu Sans Mono'.
 	Preferences setDefaultFonts: {
@@ -237,16 +242,17 @@ initialize
 		{#setWindowTitleFontTo:. family. 10}.
 		{#setCodeFontTo:. codeFamily. 10}.
 		{#setButtonFontTo:. family. 9}}.
+	DisplayScreen runningWorld ifNotNil: [ :world | world fontPreferenceChanged ].
 
 	Preferences disable: #biggerCursors.
 	Preferences enable: #dismissAllOnOptionClose.
 	Preferences enable: #subPixelRenderColorFonts.
 	Preferences disable: #italicsInShout.
-"   Preferences disable: #shoutInWorkspaces."
+"	Preferences disable: #shoutInWorkspaces."
 
 	SHTextStylerST80 initialize.
 
-	"StrikeFont useLeftArrow."
+"	StrikeFont allInstancesDo: [:each| each useLeftArrow]."
 
 	Preferences installHaloSpecsFromArray: self iconicHaloSpecifications.
 	
