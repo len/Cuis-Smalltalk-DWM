@@ -19,8 +19,8 @@ A browser on fullscreen:
 
 ## Installation
 
-To activate it you must select the DWMTheme. From the world menu: Preferences -> Themes -> DWMTheme. Then close all windows, and if you want you can change the world color to black by getting the halos on the world, inspecting it (from the debug halo) and doing "self color: Color black". Also, in the screenshots I'm using the DejaVu Mono font, that can
-be installed from the AdditionalFonts/ directory.
+To activate it you must select the DWMTheme. From the world menu: Preferences -> Themes -> DWMTheme. Then close all windows, and if you want you can change the world color to black by getting the halos on the world, inspecting it (from the debug halo) and doing "self color: Color black". In the screenshots I'm using the DejaVu Mono font, that can
+be installed from the AdditionalFonts/ directory. For customization, edit WindowManager>>keyStroke:morph and DWMTheme>>initialize.
 
 ## Keyabord shortcuts
 
