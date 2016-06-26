@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2835] on 25 June 2016 at 8:29:22.199488 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2835] on 26 June 2016 at 1:48:33.969897 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 17!
+!provides: 'Morphic-DWM' 1 18!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -375,6 +375,10 @@ textHighlight
 !DWMTheme methodsFor: 'widget colors' stamp: 'len 11/13/2015 19:11'!
 textPane
 	^ Color black! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 6/25/2016 20:25'!
+transcript
+	^ Color lightOrange! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:34'!
 unfocusedTextHighlightFrom: aColor
