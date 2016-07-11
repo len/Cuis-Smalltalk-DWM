@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2835] on 26 June 2016 at 1:48:33.969897 am'!
+'From Cuis 4.2 of 25 July 2013 [latest update: #2835] on 11 July 2016 at 5:44:18.439022 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 18!
+!provides: 'Morphic-DWM' 1 19!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -490,10 +490,10 @@ windowOpen: aSystemWindow
 new
 	^ super new initialize! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 6/11/2016 05:13'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 7/10/2016 08:52'!
 hide
 	tilingMorph notNil ifTrue: [tilingMorph visible: false].
-	windows do: [:each | each isReallyVisible ifTrue: [each removeHalo; visible: false]]! !
+	windows do: [:each | (each owner notNil and: [each isReallyVisible]) ifTrue: [each removeHalo; visible: false]]! !
 
 !WindowManagerPage methodsFor: 'initialization' stamp: 'len 11/16/2015 15:00'!
 initialize
