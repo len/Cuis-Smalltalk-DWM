@@ -1,6 +1,6 @@
-'From Cuis 4.2 of 25 July 2013 [latest update: #2835] on 11 July 2016 at 5:44:18.439022 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 1 December 2016 at 6:45:09 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 19!
+!provides: 'Morphic-DWM' 1 21!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -75,10 +75,6 @@ removedMorph: aMorph
 "	owner notNil ifTrue: [owner stackChanged]."
 	self layoutSubmorphs! !
 
-!WindowStackMorph methodsFor: 'halos and balloon help' stamp: 'len 6/12/2016 09:47'!
-skipsHalo
-	^ true! !
-
 !WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:58'!
 addMorphBack: aMorph
 	aMorph owner == self ifTrue: [^ self].
@@ -146,10 +142,6 @@ removedMorph: aMorph
 	aMorph == mainWindow
 		ifTrue: [mainWindow _ nil]
 		ifFalse: [aMorph == stack ifTrue: [stack _ nil]]! !
-
-!WindowTilingMorph methodsFor: 'halos and balloon help' stamp: 'len 6/12/2016 09:48'!
-skipsHalo
-	^ true! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:58'!
 acceptButton
@@ -413,7 +405,7 @@ initialize
 	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
 	currentPage _ pages first! !
 
-!WindowManager methodsFor: 'events' stamp: 'len 4/5/2016 18:48'!
+!WindowManager methodsFor: 'events' stamp: 'len 8/4/2016 03:12'!
 keyStroke: aKeyboardEvent morph: aMorph
 	| i |
 	aKeyboardEvent controlKeyPressed ifTrue: [^false].
