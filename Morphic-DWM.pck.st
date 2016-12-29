@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 1 December 2016 at 6:45:09 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 29 December 2016 at 8:30:13 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 21!
+!provides: 'Morphic-DWM' 1 23!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -215,14 +215,14 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 6/25/2016 08:29'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 12/11/2016 13:48:12'!
 initialize
 	| family codeFamily |
 	super initialize.
 	windowManager _ WindowManager new.
 " install fonts, manually remove 'DejaVu' and make a new 'DejaVu' that points to 'DejaVu Sans'
 StrikeFont install: 'DejaVu Sans Mono'.
-StrikeFont install: 'DejaVu Sans'.
+StrikeFont install: 'DejaVu'.
 StrikeFont buildMathFont
 "
 	family _ 'DejaVu Sans Mono'.
@@ -478,10 +478,6 @@ windowOpen: aSystemWindow
 	currentPage windowOpen: aSystemWindow.
 	aSystemWindow addHalo! !
 
-!WindowManager class methodsFor: 'instance creation' stamp: 'len 11/16/2015 15:01'!
-new
-	^ super new initialize! !
-
 !WindowManagerPage methodsFor: 'actions' stamp: 'len 7/10/2016 08:52'!
 hide
 	tilingMorph notNil ifTrue: [tilingMorph visible: false].
@@ -540,7 +536,3 @@ windowToggleTiling: aSystemWindow
 			aSystemWindow morphPosition: possibleBounds topLeft extent: possibleBounds extent].
 	tilingMorph refresh.
 	tilingMorph hasSubmorphs ifFalse: [tilingMorph delete. tilingMorph _ nil]! !
-
-!WindowManagerPage class methodsFor: 'instance creation' stamp: 'len 11/16/2015 15:01'!
-new
-	^ super new initialize! !
