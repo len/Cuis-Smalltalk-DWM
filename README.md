@@ -1,7 +1,5 @@
 # Cuis-Smalltalk-DWM
-Tiling dynamic window management in Cuis, very much in the spirit of http://dwm.suckless.org
-
-Still very experimental, will change in the future as I go along using it. 
+Tiling dynamic window management in Cuis Smalltalk, very much in the spirit of http://dwm.suckless.org
 
 ## Screenshots
 
