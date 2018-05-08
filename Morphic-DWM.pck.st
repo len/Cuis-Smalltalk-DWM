@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #2974] on 29 December 2016 at 8:30:13 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3059] on 8 May 2018 at 12:06:33 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 23!
+!provides: 'Morphic-DWM' 1 24!
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
@@ -400,12 +400,20 @@ windowOpen: aSystemWindow
 addWindow: aSystemWindow
 	currentPage windowOpen: aSystemWindow! !
 
+!WindowManager methodsFor: 'private' stamp: 'len 5/3/2018 21:58:32'!
+compactPages
+	| index |
+	index _ pages indexOf: currentPage.
+	pages _ pages sort: [:a :b| a isEmpty not or: [b isEmpty]]. "put empty pages at the end"
+	currentPage isEmpty ifTrue:
+		[index to: 1 by: -1 do: [:i| (pages at: i) isEmpty ifFalse: [^ self switchToPage: i]]]! !
+
 !WindowManager methodsFor: 'initialization' stamp: 'len 11/18/2015 07:15'!
 initialize
 	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
 	currentPage _ pages first! !
 
-!WindowManager methodsFor: 'events' stamp: 'len 8/4/2016 03:12'!
+!WindowManager methodsFor: 'events' stamp: 'len 5/4/2018 00:23:41'!
 keyStroke: aKeyboardEvent morph: aMorph
 	| i |
 	aKeyboardEvent controlKeyPressed ifTrue: [^false].
@@ -421,7 +429,7 @@ keyStroke: aKeyboardEvent morph: aMorph
 	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
 		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
 	(i _ #(33 64 35 36 37 94 38 42) indexOf: aKeyboardEvent keyValue) > 0
-		ifTrue: [aMorph owningWindow ifNotNil: [ :w | self moveWindow: w toPage: i. ^true ]].
+		ifTrue: [aMorph owningWindow ifNotNil: [ :w | self moveWindow: w toPage: i; switchToPage: i. ^true ]].
 
 	"open new windows"
 	aKeyboardEvent keyValue = $B asciiValue
@@ -460,23 +468,34 @@ printOn: aStream
 	(1 to: pages size) do: [:i | aStream print: i; nextPut: $:; print: (pages at: i)] separatedBy: [aStream space].
 	aStream nextPutAll: ' current: '; print: (pages indexOf: currentPage)! !
 
-!WindowManager methodsFor: 'actions' stamp: 'len 6/11/2016 05:14'!
+!WindowManager methodsFor: 'actions' stamp: 'len 5/3/2018 22:06:18'!
 switchToPage: anInteger
 	| newPage |
 	newPage _ pages at: anInteger.
 	currentPage == newPage ifTrue: [^ self].
+	newPage isEmpty ifTrue: [^ currentPage flash].
 	currentPage hide.
 	currentPage _ newPage.
 	currentPage show! !
 
-!WindowManager methodsFor: 'events' stamp: 'len 11/17/2015 22:23'!
+!WindowManager methodsFor: 'events' stamp: 'len 5/5/2018 00:45:39'!
 windowClosed: aSystemWindow
-	currentPage windowClosed: aSystemWindow! !
+	currentPage windowClosed: aSystemWindow.
+	currentPage isEmpty ifTrue:
+		[| currentIndex |
+		currentIndex _ pages indexOf: currentPage.
+		(currentIndex - 1 to: 1 by: -1), (currentIndex + 1 to: pages size)
+			do: [:i| (pages at: i) isEmpty ifFalse: [^ self switchToPage: i]]]! !
 
 !WindowManager methodsFor: 'events' stamp: 'len 11/17/2015 17:30'!
 windowOpen: aSystemWindow
 	currentPage windowOpen: aSystemWindow.
 	aSystemWindow addHalo! !
+
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 5/5/2018 19:08:29'!
+flash
+	tilingMorph ifNotNil: [:aMorph| aMorph world ifNotNil: [:aWorld| aWorld flash. ^ self]].
+	windows do: [:each| each world ifNotNil: [:aWorld| aWorld flash. ^ self]]! !
 
 !WindowManagerPage methodsFor: 'actions' stamp: 'len 7/10/2016 08:52'!
 hide
@@ -486,6 +505,10 @@ hide
 !WindowManagerPage methodsFor: 'initialization' stamp: 'len 11/16/2015 15:00'!
 initialize
 	windows _ OrderedCollection new! !
+
+!WindowManagerPage methodsFor: 'testing' stamp: 'len 5/3/2018 21:06:42'!
+isEmpty
+	^ windows isEmpty! !
 
 !WindowManagerPage methodsFor: 'printing' stamp: 'len 11/16/2015 15:36'!
 printOn: aStream
