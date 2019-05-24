@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 24 May 2019 at 7:11:23 am'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 24 May 2019 at 2:47:00 pm'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 28!
+!provides: 'Morphic-DWM' 1 29!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -257,9 +257,13 @@ unfocusedTextHighlightFrom: aColor
 windowLabel
 	^ Color white! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 06:39'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:19:09'!
+browser
+	^ Color lightGreen duller! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:35:34'!
 changeSorter
-	^ Color lightBlue lighter duller! !
+	^ Color lightBlue duller! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 6/9/2016 00:06'!
 debugger
@@ -269,13 +273,37 @@ debugger
 defaultWindowColor
 	^ Color gray darker! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/18/2015 06:38'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:25:09'!
+fileList
+	^ Color lightMagenta lighter duller! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:33:18'!
+messageNames
+	^ Color lime lighter duller! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:36:20'!
+messageSet
+	^ Color skyBlue duller! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:20:11'!
 packageList
-	^ Color lightOrange lighter duller! !
+	^ Color lightOrange duller! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:27:43'!
+testRunner
+	^ Color skyBlue lighter duller! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 6/25/2016 20:25'!
 transcript
 	^ Color lightOrange! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:29:22'!
+versionsBrowser
+	^ Color lavender lighter duller! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:22:05'!
+workspace
+	^ Color lightYellow duller! !
 
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
 embossedTitles
@@ -333,7 +361,7 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 5/24/2019 06:54:15'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 5/24/2019 13:36:43'!
 initialize
 	super initialize.
 	windowManager _ WindowManager new.
@@ -351,8 +379,9 @@ initialize
 	Preferences disable: #biggerCursors.
 	Preferences enable: #dismissAllOnOptionClose.
 	Preferences enable: #subPixelRenderColorFonts.
-	Preferences disable: #italicsInShout.
+	Preferences enable: #italicsInShout.
 	Preferences disable: #shoutInWorkspaces.
+	Preferences disable: #optionalButtons.
 
 	SHTextStylerST80 initialize.
 
