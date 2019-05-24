@@ -23,7 +23,7 @@ To activate it you must select the DWMTheme from the world menu or by doing "DWM
 
 In the screenshots I'm using the DejaVu Mono font, that can be installed from the AdditionalFonts/ directory. If you notice some green shadow in text over black background, you can "Preferences disable: #subPixelRenderColorFonts" or use 'DejaVu Mono' that currently doesn't have this problem.
 
-## Keyabord shortcuts
+## Keyboard shortcuts
 
 Shotcuts can be customized in WindowManager>>keyStroke:morph:. Here are some default shortcuts:
 
