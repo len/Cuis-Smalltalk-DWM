@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3741] on 12 May 2019 at 1:02:20 pm'!
+'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 24 May 2019 at 7:11:23 am'!
 'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 25!
+!provides: 'Morphic-DWM' 1 28!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -183,9 +183,9 @@ listMultiHighlightFocused: aBoolean
 	^ (self listHighlightFocused: aBoolean) 
 		adjustSaturation: 0.0 brightness: 0.15! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:25'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 5/24/2019 04:51:35'!
 paneBackgroundFrom: aColor
-	^ Color black! !
+	^ aColor alphaMixed: 0.1 with: Color black! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:39'!
 scrollbarButtonColor
@@ -199,7 +199,7 @@ scrollbarColor
 scrollbarSliderShadowColor
 	^Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 5/12/2019 12:43:16'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 5/24/2019 07:09:24'!
 shout
 	^ {
 		#selector  				-> nil.
@@ -333,18 +333,12 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 12/11/2016 13:48:12'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 5/24/2019 06:54:15'!
 initialize
-	| family codeFamily |
 	super initialize.
 	windowManager _ WindowManager new.
-" install fonts, manually remove 'DejaVu' and make a new 'DejaVu' that points to 'DejaVu Sans'
-StrikeFont install: 'DejaVu Sans Mono'.
-StrikeFont install: 'DejaVu'.
-StrikeFont buildMathFont
-"
-	family _ 'DejaVu Sans Mono'.
-	codeFamily _ 'DejaVu Sans Mono'.
+"	family _ 'DejaVu Sans'.
+	codeFamily _ 'DejaVu Sans'.
 	Preferences setDefaultFonts: {
 		{#setSystemFontTo:. family. 10}.
 		{#setListFontTo:. family. 10}.
@@ -353,12 +347,12 @@ StrikeFont buildMathFont
 		{#setCodeFontTo:. codeFamily. 10}.
 		{#setButtonFontTo:. family. 9}}.
 	DisplayScreen runningWorld ifNotNil: [ :world | world fontPreferenceChanged ].
-
+"
 	Preferences disable: #biggerCursors.
 	Preferences enable: #dismissAllOnOptionClose.
 	Preferences enable: #subPixelRenderColorFonts.
 	Preferences disable: #italicsInShout.
-"	Preferences disable: #shoutInWorkspaces."
+	Preferences disable: #shoutInWorkspaces.
 
 	SHTextStylerST80 initialize.
 
@@ -385,10 +379,6 @@ menuText
 menuTitleBar
 	^ self menu darker! !
 
-!DWMTheme methodsFor: 'menus' stamp: 'len 11/16/2015 02:37'!
-menuDecorations
-	^ Dictionary new! !
-
 !DWMTheme methodsFor: 'widget colors' stamp: 'len 11/13/2015 19:11'!
 textPane
 	^ Color black! !
@@ -400,6 +390,62 @@ windowClosed: aSystemWindow
 !DWMTheme methodsFor: 'window management' stamp: 'len 11/16/2015 15:31'!
 windowOpen: aSystemWindow
 	windowManager windowOpen: aSystemWindow! !
+
+!DWMTheme methodsFor: 'private - shout mappings' stamp: 'len 5/24/2019 07:08:49'!
+generateShoutConfig
+
+	| styles colors |
+	styles := OrderedCollection new.
+	colors := self shout as: Dictionary.
+
+	{
+		{self undefined. colors at: #undefined}.
+		{self defaults . colors at: #defaults}.
+		{self pseudoVariables . colors at: #pseudoVariables. #bold}.
+		{self literals . colors at: #literals}.
+		{self instVar . colors at: #instVar}.
+		{self messages . colors at: #messages}.
+		{self blockLevelZero . colors at: #blockLevelZero}.
+		{self blockLevelOne . colors at: #blockLevelOne}.
+		{self blockLevelTwo . colors at: #blockLevelTwo}.
+		{self blockLevelThree . colors at: #blockLevelThree}.
+		{self blockLevelFour . colors at: #blockLevelFour}.
+		{self blockLevelFive . colors at: #blockLevelFive}.
+		{self blockLevelSix . colors at: #blockLevelSix}.
+		{self blockLevelSeven . colors at: #blockLevelSeven}.
+		{self tempBar . colors at: #tempBar}.
+		{self methodTags . colors at: #methodTags . #bold}.
+		{self globals . colors at: #defaults . #bold}.
+		{self incompleteMessages . colors at: #incompleteMessages . #underlined}.
+		{self argumentTypes . colors at: #arguments . self italic}.
+		{self symbols . colors at: #messages . #bold}.
+		{self pattern . colors at: #selector . #bold}.
+		{self ansiAssignment . nil . #bold}.
+		{self assignment . nil . #(#bold #withST80Glyphs)}.
+		{self return . nil . #(#bold #withST80Glyphs)}.
+		{self tempVars . colors at: #tempVars . self italic}.
+		{self blockTemps . colors at: #tempBar . self italic}
+	} do: [ :style |
+		styles addAll:
+			(style first
+				collect: [ :category | | elements |
+					elements _ style asOrderedCollection.
+					elements at: 1 put: category.
+					Array withAll: elements ])].
+
+	"Miscellaneous remainder after factoring out commonality:"
+	styles addAll: {
+		{#unfinishedString . colors at: #undefined . #normal}.
+		{#undefinedIdentifier . colors at: #undefined .#bold}.
+		{#unfinishedComment . colors at: #pseudoVariables . self italic}.
+		{#comment . colors at: #comment . self italic}.
+		{#string . colors at: #instVar . #normal}.
+		{#literal . nil . self italic}.
+		{#incompleteIdentifier . colors at: #tempVars . {#italic. #underlined}}.
+		{#classVar . colors at: #tempVars . #bold}.
+	}.
+
+	^ styles! !
 
 !WindowManager methodsFor: 'initialization' stamp: 'len 11/17/2015 23:02'!
 addWindow: aSystemWindow
