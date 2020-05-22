@@ -17,7 +17,7 @@ A browser on fullscreen:
 
 ## Installation
 
-Install it as a Cuis package from a file list window. For customization, edit DWMTheme>>initialize WindowManager>>keyStroke:morph.
+Install it as a Cuis package from a file list window. For customization, edit DWMTheme>>initialize and WindowManager>>keyStroke:morph.
 
 To activate it you must select the DWMTheme from the world menu or by doing "DWMTheme beCurrent", then close all windows.
 

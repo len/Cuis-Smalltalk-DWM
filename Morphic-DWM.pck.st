@@ -1,6 +1,6 @@
-'From Cuis 5.0 of 7 November 2016 [latest update: #3762] on 24 May 2019 at 2:47:00 pm'!
-'Description Please enter a description for this package'!
-!provides: 'Morphic-DWM' 1 29!
+'From Cuis 5.0 [latest update: #4163] on 22 May 2020 at 12:55:13 pm'!
+'Description Dynamic tiling window manager for Cuis Smalltalk.'!
+!provides: 'Morphic-DWM' 1 39!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -24,24 +24,24 @@ LayoutMorph subclass: #WindowTilingMorph
 WindowTilingMorph class
 	instanceVariableNames: ''!
 
+!classDefinition: #WindowManagerMorph category: #'Morphic-DWM'!
+RectangleLikeMorph subclass: #WindowManagerMorph
+	instanceVariableNames: 'pages currentPage'
+	classVariableNames: 'Current'
+	poolDictionaries: ''
+	category: 'Morphic-DWM'!
+!classDefinition: 'WindowManagerMorph class' category: #'Morphic-DWM'!
+WindowManagerMorph class
+	instanceVariableNames: ''!
+
 !classDefinition: #DWMTheme category: #'Morphic-DWM'!
 Theme subclass: #DWMTheme
-	instanceVariableNames: 'windowManager'
+	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
 !classDefinition: 'DWMTheme class' category: #'Morphic-DWM'!
 DWMTheme class
-	instanceVariableNames: ''!
-
-!classDefinition: #WindowManager category: #'Morphic-DWM'!
-Object subclass: #WindowManager
-	instanceVariableNames: 'pages currentPage'
-	classVariableNames: ''
-	poolDictionaries: ''
-	category: 'Morphic-DWM'!
-!classDefinition: 'WindowManager class' category: #'Morphic-DWM'!
-WindowManager class
 	instanceVariableNames: ''!
 
 !classDefinition: #WindowManagerPage category: #'Morphic-DWM'!
@@ -54,12 +54,6 @@ Object subclass: #WindowManagerPage
 WindowManagerPage class
 	instanceVariableNames: ''!
 
-
-!WindowManager methodsFor: 'printing' stamp: 'len 11/16/2015 15:40'!
-printOn: aStream
-	super printOn: aStream.
-	(1 to: pages size) do: [:i | aStream print: i; nextPut: $:; print: (pages at: i)] separatedBy: [aStream space].
-	aStream nextPutAll: ' current: '; print: (pages indexOf: currentPage)! !
 
 !WindowManagerPage methodsFor: 'printing' stamp: 'len 11/16/2015 15:36'!
 printOn: aStream
@@ -77,6 +71,11 @@ removedMorph: aMorph
 	super removedMorph: aMorph.
 "	owner notNil ifTrue: [owner stackChanged]."
 	self layoutSubmorphs! !
+
+!WindowTilingMorph methodsFor: 'initialization' stamp: 'len 11/19/2015 07:24'!
+initialize
+	super initialize.
+	self sticky: true! !
 
 !WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:58'!
 addMorphBack: aMorph
@@ -106,11 +105,6 @@ removedMorph: aMorph
 		ifTrue: [mainWindow _ nil]
 		ifFalse: [aMorph == stack ifTrue: [stack _ nil]]! !
 
-!WindowTilingMorph methodsFor: 'initialization' stamp: 'len 11/19/2015 07:24'!
-initialize
-	super initialize.
-	self sticky: true! !
-
 !WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 13:45'!
 popWindow
 	"There's no main window, pop a window from the stack and set it as main window."
@@ -133,11 +127,11 @@ pushWindow
 			self addMorphFront: stack].
 	stack addMorphBack: mainWindow! !
 
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/17/2015 05:56'!
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 5/22/2020 09:13:49'!
 refresh
 	mainWindow isNil ifTrue: [self popWindow].
 	stack isNil ifFalse: [stack hasSubmorphs not ifTrue: [self removeStack]].
-	stack isNil	ifFalse: [stack layoutSubmorphs].
+	stack isNil ifFalse: [stack layoutSubmorphs].
 	self layoutSubmorphs! !
 
 !WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 04:38'!
@@ -145,6 +139,217 @@ removeStack
 	stack isNil ifTrue: [^ self].
 	stack delete.
 	stack _ nil! !
+
+!WindowManagerMorph methodsFor: 'actions' stamp: 'len 5/22/2020 10:33:53'!
+moveWindow: aSystemWindow toPage: anInteger
+	| newPage |
+	newPage _ pages at: anInteger.
+	newPage == currentPage ifTrue: [^ self].
+	(aSystemWindow hasProperty: #floatingBounds) ifTrue: [^ self].
+
+	currentPage windowClosed: aSystemWindow.
+	aSystemWindow removeHalo.
+	aSystemWindow visible: false.
+	newPage windowOpen: aSystemWindow.
+	
+	self step.
+	self redrawNeeded! !
+
+!WindowManagerMorph methodsFor: 'actions' stamp: 'len 5/22/2020 10:33:39'!
+switchToPage: anInteger
+	| newPage |
+	newPage _ pages at: anInteger.
+	currentPage == newPage ifTrue: [^ self].
+"	newPage isEmpty ifTrue: [^ currentPage flash]."
+	currentPage hide.
+	currentPage _ newPage.
+	currentPage show.
+	self step.
+	self redrawNeeded! !
+
+!WindowManagerMorph methodsFor: 'drawing' stamp: 'len 5/22/2020 12:48:49'!
+drawOn: aCanvas
+	| font w rect |
+	aCanvas fillRectangle: self morphLocalBounds color: color.
+	font _ self font.
+	w _ font lineSpacing.
+	rect _ 0@0 extent: w@w.
+	pages withIndexDo: [:page :i|
+		page == currentPage
+			ifTrue: [aCanvas fillRectangle: (rect insetBy: 1) color: Color black].
+		aCanvas
+			drawString: i printString
+			at: rect topLeft + (3@1)
+			font: font
+			color: (page == currentPage ifTrue: [Color white] ifFalse: [page isEmpty ifTrue: [Color black] ifFalse: [Color gray]]).
+		rect _ rect translatedBy: w@0].
+"	activeWindowLabel ifNotNil:
+		[:aString|
+		aCanvas drawString: activeWindowLabel asString
+			at: rect topRight + (w@1)
+			font: font
+			color: Color black]"! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 11:03:11'!
+keyStroke: aKeyboardEvent morph: aMorph
+	"Handle global shortcuts. Return true if the event was handled, false otherwise."
+	| i |
+	"Global shortcuts should use command (Mac) / alt (PC) key.
+	Control key is reserved for normal shortcuts (local shortcuts, defined by a morph)."
+	(aKeyboardEvent controlKeyPressed or: [aKeyboardEvent commandAltKeyPressed not]) ifTrue: [^false].
+
+	aKeyboardEvent keyValue = $w asciiValue
+		ifTrue: [aMorph owningWindow ifNotNil: [:w| w delete. ^true]].
+	aKeyboardEvent keyValue = 27
+		ifTrue: [aMorph owningWindow ifNotNil: [:w| w fullScreen. ^true]].
+	aKeyboardEvent keyValue = $t asciiValue
+		ifTrue: [aMorph owningWindow ifNotNil: [:w| currentPage windowToggleTiling: w windowsArea: self windowsArea. ^true]].
+
+	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
+		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
+	(i _ #(33 64 35 36 37 94 38 42) indexOf: aKeyboardEvent keyValue) > 0
+		ifTrue: [aMorph owningWindow ifNotNil: [:w| self moveWindow: w toPage: i; switchToPage: i. ^true]].
+
+	"Shortcuts to open new windows:"
+	aKeyboardEvent keyValue = $B asciiValue
+		ifTrue: [BrowserWindow openBrowser. ^true].
+	aKeyboardEvent keyValue = $W asciiValue
+		ifTrue: [Workspace new contents: ''; openLabel: 'Workspace'. ^true].
+	aKeyboardEvent keyValue = $T asciiValue
+		ifTrue: [TranscriptWindow openTranscript. ^true].
+	aKeyboardEvent keyValue = $P asciiValue
+		ifTrue: [CodePackageListWindow openPackageList. ^true].
+	aKeyboardEvent keyValue = $F asciiValue
+		ifTrue: [FileListWindow openFileList. ^true].
+	aKeyboardEvent keyValue = $C asciiValue
+		ifTrue: [ChangeSorterWindow open: ChangeSorter new label: nil. ^true].
+	aKeyboardEvent keyValue = $R asciiValue
+		ifTrue: [TestRunnerWindow openTestRunner. ^true].
+	aKeyboardEvent keyValue = $M asciiValue
+		ifTrue: [MessageNamesWindow open: MessageNames new label: 'Message Names'. ^true].
+	^ false! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 08:43:45'!
+windowClosed: aSystemWindow
+	currentPage windowClosed: aSystemWindow.
+"	currentPage isEmpty ifTrue:
+		[| currentIndex |
+		currentIndex _ pages indexOf: currentPage.
+		(currentIndex - 1 to: 1 by: -1), (currentIndex + 1 to: pages size)
+			do: [:i| (pages at: i) isEmpty ifFalse: [^ self switchToPage: i]]]"! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 08:43:48'!
+windowOpen: aSystemWindow
+	currentPage windowOpen: aSystemWindow.
+	aSystemWindow addHalo! !
+
+!WindowManagerMorph methodsFor: 'initialization' stamp: 'len 5/22/2020 12:39:43'!
+initialize
+	super initialize.
+	self color: (Color white alpha: 0.2).
+	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
+	currentPage _ pages first! !
+
+!WindowManagerMorph methodsFor: 'initialization' stamp: 'len 5/22/2020 09:15:01'!
+reset
+	pages do: [:each| each delete].
+	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
+	currentPage _ pages first.
+	SystemWindow allSubInstances do: [:each|each isInWorld ifTrue: [self addWindow: each]]! !
+
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/22/2020 12:36:35'!
+step
+"	| window hand |
+	hand _ self runningWorld activeHand.
+	window _ (hand keyboardFocus ifNil: [hand world submorphs detect: [:one| one morphContainsPoint: hand morphPosition] ifNone: []]) ifNotNil: [:aMorph| aMorph owningWindow].
+	window == activeWindow
+		ifFalse:
+			[(activeWindow _ window) isNil
+				ifTrue:
+					[color _ Color veryDarkGray.
+					activeWindowLabel _ '']
+				ifFalse:
+					[color _ activeWindow borderColor.
+					activeWindowLabel _ activeWindow label].
+			self redrawNeeded.
+			^ self].
+	(activeWindow notNil and: [activeWindow label ~~ activeWindowLabel])
+	 	ifTrue:
+			[activeWindowLabel _ activeWindow label.
+			self redrawNeeded]."
+	self comeToFront! !
+
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/22/2020 12:36:46'!
+stepTime
+	^ 500! !
+
+!WindowManagerMorph methodsFor: 'submorphs-accessing' stamp: 'len 5/22/2020 09:30:25'!
+noteNewOwner: aMorph
+	"I have just been added as a submorph of aMorph"
+	Current ifNotNil: [:m| Display removeActionsWithReceiver: m. Current delete].
+	Current _ self.
+	super noteNewOwner: aMorph.
+	self reset.
+	Display
+		when: #screenSizeChanged
+		send: #screenSizeChanged
+		to: self.
+	self updateBounds! !
+
+!WindowManagerMorph methodsFor: 'submorphs-add/remove' stamp: 'len 5/22/2020 09:17:45'!
+delete
+	pages do: [:each| each delete].
+	super delete.
+	Display removeActionsWithReceiver: self.
+	Current == self ifTrue: [Current _ nil]! !
+
+!WindowManagerMorph methodsFor: 'testing' stamp: 'len 5/19/2020 12:23:50'!
+isSticky
+	^true! !
+
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 08:41:44'!
+addWindow: aSystemWindow
+	currentPage windowOpen: aSystemWindow! !
+
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 07:53:35'!
+defaultHeight
+	^ self font lineSpacing! !
+
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 12:52:26'!
+defaultWidth
+	^ self font lineSpacing * 8 + 2! !
+
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 10:49:27'!
+font
+	^ (FontFamily familyNamed: FontFamily defaultFamilyName) aroundPointSize: 8! !
+
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 08:09:22'!
+screenSizeChanged
+	UISupervisor whenUIinSafeState: [self updateBounds]! !
+
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 12:43:56'!
+updateBounds
+	| area |
+"at bottom:
+	self world ifNotNil: [:w| self morphPosition: 0@(w morphHeight - self defaultHeight) extent: w morphExtent x @ self defaultHeight].
+at top:
+	self world ifNotNil: [:w| self morphPosition: 0@0 extent: w morphExtent x @ self defaultHeight]."
+	self world ifNotNil: [:w| self morphPosition: w morphWidth - self defaultWidth @(w morphHeight - self defaultHeight) extent: w morphExtent x @ self defaultHeight].
+	area _ self windowsArea.
+	pages do: [:each| each updateBounds: area]! !
+
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 12:40:47'!
+windowsArea
+	| allowedArea |
+	allowedArea _ Display boundingBox.
+	self world ifNotNil: [:w|
+		allowedArea _ allowedArea intersect: w viewBox.
+		"self morphBoundsInWorld ifNotNil: [:r| allowedArea _ (allowedArea areasOutside: r) first ]"].
+	^allowedArea! !
+
+!WindowManagerMorph class methodsFor: 'as yet unclassified' stamp: 'len 5/22/2020 08:33:15'!
+current
+	^ Current! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:58'!
 acceptButton
@@ -183,9 +388,9 @@ listMultiHighlightFocused: aBoolean
 	^ (self listHighlightFocused: aBoolean) 
 		adjustSaturation: 0.0 brightness: 0.15! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 5/24/2019 04:51:35'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 5/25/2019 05:17:17'!
 paneBackgroundFrom: aColor
-	^ aColor alphaMixed: 0.1 with: Color black! !
+	^ aColor alphaMixed: 0.11 with: Color black! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:39'!
 scrollbarButtonColor
@@ -277,33 +482,39 @@ defaultWindowColor
 fileList
 	^ Color lightMagenta lighter duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:33:18'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/1/2020 06:26:42'!
 messageNames
-	^ Color lime lighter duller! !
+	^ Color lightGreen! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:36:20'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/1/2020 06:25:52'!
 messageSet
-	^ Color skyBlue duller! !
+	^ Color lightBlue duller! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:20:11'!
 packageList
 	^ Color lightOrange duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:27:43'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/1/2020 06:27:27'!
 testRunner
-	^ Color skyBlue lighter duller! !
+	^ Color lightBlue! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 6/25/2016 20:25'!
 transcript
 	^ Color lightOrange! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:29:22'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/1/2020 06:27:39'!
 versionsBrowser
-	^ Color lavender lighter duller! !
+	^ Color lightBlue! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:22:05'!
 workspace
 	^ Color lightYellow duller! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/19/2020 04:12:25'!
+buttonPaneHeight
+	"Answer the user's preferred default height for button panes."
+
+	^Preferences standardButtonFont lineSpacing * 10 // 8! !
 
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
 embossedTitles
@@ -361,10 +572,9 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 5/24/2019 13:36:43'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 5/22/2020 12:37:07'!
 initialize
 	super initialize.
-	windowManager _ WindowManager new.
 "	family _ 'DejaVu Sans'.
 	codeFamily _ 'DejaVu Sans'.
 	Preferences setDefaultFonts: {
@@ -381,20 +591,17 @@ initialize
 	Preferences enable: #subPixelRenderColorFonts.
 	Preferences enable: #italicsInShout.
 	Preferences disable: #shoutInWorkspaces.
-	Preferences disable: #optionalButtons.
+	Preferences enable: #optionalButtons.
 
 	SHTextStylerST80 initialize.
 
-"	StrikeFont allInstancesDo: [:each| each useLeftArrow]."
-
+"	StrikeFont allInstancesDo: [:each| each useLeftArrow].
+	TTFontDescription allInstancesDo: [:each| each useLeftArrow].
+"
 	Preferences installHaloSpecsFromArray: self iconicHaloSpecifications.
 	
 	Smalltalk garbageCollect.
-	SystemWindow allSubInstances do: [:each|each isInWorld ifTrue: [windowManager addWindow: each]]! !
-
-!DWMTheme methodsFor: 'keyboard shortcuts' stamp: 'len 11/16/2015 15:31'!
-keyStroke: aKeyboardEvent morph: aMorph
-		^windowManager keyStroke: aKeyboardEvent morph: aMorph! !
+	WindowManagerMorph new openInWorld startStepping! !
 
 !DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
 menu
@@ -411,14 +618,6 @@ menuTitleBar
 !DWMTheme methodsFor: 'widget colors' stamp: 'len 11/13/2015 19:11'!
 textPane
 	^ Color black! !
-
-!DWMTheme methodsFor: 'window management' stamp: 'len 11/16/2015 15:31'!
-windowClosed: aSystemWindow
-	windowManager windowClosed: aSystemWindow! !
-
-!DWMTheme methodsFor: 'window management' stamp: 'len 11/16/2015 15:31'!
-windowOpen: aSystemWindow
-	windowManager windowOpen: aSystemWindow! !
 
 !DWMTheme methodsFor: 'private - shout mappings' stamp: 'len 5/24/2019 07:08:49'!
 generateShoutConfig
@@ -476,96 +675,6 @@ generateShoutConfig
 
 	^ styles! !
 
-!WindowManager methodsFor: 'initialization' stamp: 'len 11/17/2015 23:02'!
-addWindow: aSystemWindow
-	currentPage windowOpen: aSystemWindow! !
-
-!WindowManager methodsFor: 'initialization' stamp: 'len 11/18/2015 07:15'!
-initialize
-	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
-	currentPage _ pages first! !
-
-!WindowManager methodsFor: 'private' stamp: 'len 5/3/2018 21:58:32'!
-compactPages
-	| index |
-	index _ pages indexOf: currentPage.
-	pages _ pages sort: [:a :b| a isEmpty not or: [b isEmpty]]. "put empty pages at the end"
-	currentPage isEmpty ifTrue:
-		[index to: 1 by: -1 do: [:i| (pages at: i) isEmpty ifFalse: [^ self switchToPage: i]]]! !
-
-!WindowManager methodsFor: 'events' stamp: 'len 5/4/2018 00:23:41'!
-keyStroke: aKeyboardEvent morph: aMorph
-	| i |
-	aKeyboardEvent controlKeyPressed ifTrue: [^false].
-	aKeyboardEvent commandAltKeyPressed ifFalse: [^false].
-
-	aKeyboardEvent keyValue = $w asciiValue
-		ifTrue: [aMorph owningWindow ifNotNil: [ :w | w delete. ^true ]].
-	aKeyboardEvent keyValue = 27
-		ifTrue: [aMorph owningWindow ifNotNil: [ :w | w fullScreen. ^true ]].
-	aKeyboardEvent keyValue = $t asciiValue
-		ifTrue: [aMorph owningWindow ifNotNil: [ :w | currentPage windowToggleTiling: w. ^true ]].
-
-	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
-		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
-	(i _ #(33 64 35 36 37 94 38 42) indexOf: aKeyboardEvent keyValue) > 0
-		ifTrue: [aMorph owningWindow ifNotNil: [ :w | self moveWindow: w toPage: i; switchToPage: i. ^true ]].
-
-	"open new windows"
-	aKeyboardEvent keyValue = $B asciiValue
-		ifTrue: [BrowserWindow openBrowser. ^true].
-	aKeyboardEvent keyValue = $W asciiValue
-		ifTrue: [Workspace new contents: ''; openLabel: 'Workspace'. ^true].
-	aKeyboardEvent keyValue = $T asciiValue
-		ifTrue: [TranscriptWindow openTranscript. ^true].
-	aKeyboardEvent keyValue = $P asciiValue
-		ifTrue: [CodePackageListWindow openPackageList. ^true].
-	aKeyboardEvent keyValue = $F asciiValue
-		ifTrue: [FileListWindow openFileList. ^true].
-	aKeyboardEvent keyValue = $C asciiValue
-		ifTrue: [ChangeSorterWindow open: ChangeSorter new label: nil. ^true].
-	aKeyboardEvent keyValue = $R asciiValue
-		ifTrue: [TestRunnerWindow openTestRunner. ^true].
-	aKeyboardEvent keyValue = $M asciiValue
-		ifTrue: [MessageNamesWindow open: MessageNames new label: 'Message Names'].
-	^ false! !
-
-!WindowManager methodsFor: 'events' stamp: 'len 5/5/2018 00:45:39'!
-windowClosed: aSystemWindow
-	currentPage windowClosed: aSystemWindow.
-	currentPage isEmpty ifTrue:
-		[| currentIndex |
-		currentIndex _ pages indexOf: currentPage.
-		(currentIndex - 1 to: 1 by: -1), (currentIndex + 1 to: pages size)
-			do: [:i| (pages at: i) isEmpty ifFalse: [^ self switchToPage: i]]]! !
-
-!WindowManager methodsFor: 'events' stamp: 'len 11/17/2015 17:30'!
-windowOpen: aSystemWindow
-	currentPage windowOpen: aSystemWindow.
-	aSystemWindow addHalo! !
-
-!WindowManager methodsFor: 'actions' stamp: 'len 11/17/2015 22:46'!
-moveWindow: aSystemWindow toPage: anInteger
-	| newPage |
-	newPage _ pages at: anInteger.
-	newPage == currentPage ifTrue: [^ self].
-	(aSystemWindow hasProperty: #floatingBounds) ifTrue: [^ self].
-
-	currentPage windowClosed: aSystemWindow.
-	aSystemWindow removeHalo.
-	aSystemWindow visible: false.
-	newPage windowOpen: aSystemWindow! !
-
-!WindowManager methodsFor: 'actions' stamp: 'len 5/3/2018 22:06:18'!
-switchToPage: anInteger
-	| newPage |
-	newPage _ pages at: anInteger.
-	currentPage == newPage ifTrue: [^ self].
-	newPage isEmpty ifTrue: [^ currentPage flash].
-	currentPage hide.
-	currentPage _ newPage.
-	currentPage show! !
-
 !WindowManagerPage methodsFor: 'actions' stamp: 'len 5/5/2018 19:08:29'!
 flash
 	tilingMorph ifNotNil: [:aMorph| aMorph world ifNotNil: [:aWorld| aWorld flash. ^ self]].
@@ -581,8 +690,8 @@ show
 	tilingMorph notNil ifTrue: [tilingMorph visible: true].
 	windows do: [:each | each visible ifFalse: [each visible: true]]! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 11/17/2015 22:46'!
-windowToggleTiling: aSystemWindow
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 5/22/2020 09:04:47'!
+windowToggleTiling: aSystemWindow windowsArea: windowsArea
 	| possibleBounds |
 	aSystemWindow isInWorld ifFalse: [^ self].
 	aSystemWindow removeHalo.
@@ -590,7 +699,7 @@ windowToggleTiling: aSystemWindow
 		ifTrue:
 			[tilingMorph _ WindowTilingMorph newRow.
 			aSystemWindow world addMorphBack: tilingMorph.
-			tilingMorph morphPosition:	0 @ 0 extent: (RealEstateAgent maximumUsableAreaInWorld: aSystemWindow world) extent].
+			self updateBounds: windowsArea].
 	aSystemWindow owner == aSystemWindow world
 		ifTrue:
 			[aSystemWindow setProperty: #floatingBounds toValue: aSystemWindow morphBoundsInWorld.
@@ -602,6 +711,20 @@ windowToggleTiling: aSystemWindow
 			aSystemWindow morphPosition: possibleBounds topLeft extent: possibleBounds extent].
 	tilingMorph refresh.
 	tilingMorph hasSubmorphs ifFalse: [tilingMorph delete. tilingMorph _ nil]! !
+
+!WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 23:05'!
+windowClosed: aSystemWindow
+	windows remove: aSystemWindow ifAbsent: [].
+	self refresh! !
+
+!WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 02:28'!
+windowOpen: aSystemWindow
+	windows add: aSystemWindow.
+	self refresh! !
+
+!WindowManagerPage methodsFor: 'initialization' stamp: 'len 5/22/2020 09:15:31'!
+delete
+	tilingMorph ifNotNil: [tilingMorph delete. tilingMorph _ nil]! !
 
 !WindowManagerPage methodsFor: 'initialization' stamp: 'len 11/16/2015 15:00'!
 initialize
@@ -618,15 +741,13 @@ refresh
 	tilingMorph hasSubmorphs ifFalse: [tilingMorph delete].
 	tilingMorph isInWorld ifFalse: [tilingMorph _ nil]! !
 
-!WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 23:05'!
-windowClosed: aSystemWindow
-	windows remove: aSystemWindow ifAbsent: [].
-	self refresh! !
+!WindowManagerPage methodsFor: 'private' stamp: 'len 5/22/2020 09:02:53'!
+updateBounds
+	self runningWorld submorphs do: [:one| (one isKindOf: WindowManagerMorph) ifTrue: [^ self updateBounds: one windowsArea]]! !
 
-!WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 02:28'!
-windowOpen: aSystemWindow
-	windows add: aSystemWindow.
-	self refresh! !
+!WindowManagerPage methodsFor: 'private' stamp: 'len 5/22/2020 08:56:43'!
+updateBounds: windowsArea
+	tilingMorph ifNotNil: [tilingMorph morphPosition: windowsArea topLeft extent: windowsArea extent]! !
 
 !SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 11/19/2015 07:44'!
 quit
@@ -640,12 +761,12 @@ save
 saveAndQuit
 	^ self snapshot: true andQuit: true clearAllClassState: false! !
 
-!Morph methodsFor: '*morphic-dwm' stamp: 'len 5/12/2019 13:01:50'!
+!RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 10:07:46'!
+screenTopSetback
+	^ 16! !
+
+!Morph methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 05:54:44'!
 focusKeyboardFor: aKeyboardEvent
-
-	(Theme current keyStroke: aKeyboardEvent morph: self)
-		ifTrue: [^ true].
-
 	"If aKeyboardEvent ctrl-tab or shift-ctrl-tab use it to navigate keyboard focus.
 	Warning: This doesn't work on Windows... the event is not sent"
 	(aKeyboardEvent keyValue = 9 and: [ aKeyboardEvent controlKeyPressed and: [ aKeyboardEvent rawMacOptionKeyPressed not ]])
@@ -688,21 +809,44 @@ focusKeyboardFor: aKeyboardEvent
 		^true ].
 	^false! !
 
-!Morph methodsFor: '*morphic-dwm' stamp: 'len 5/12/2019 12:58:21'!
-keyStroke: aKeyboardEvent
-	"Handle a keystroke event."
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 08:59:41'!
+delete
+	| thisWorld |
+	self okToChange ifFalse: [^self].
+	thisWorld _ self world.
+	SystemWindow noteTopWindowIn: thisWorld but: self.
+	self sendToBack.
+	self removeHalo.
+	super delete.
+	self model: nil.
+	WindowManagerMorph current ifNotNil: [:m| m windowClosed: self]! !
 
-	(Theme current keyStroke: aKeyboardEvent morph: self)
-		ifTrue: [^ self].
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 09:00:26'!
+openInWorld
+	"Ensure all widgets have proper colors before opening"
+	self widgetsColor: self windowColor.
+	super openInWorld.
+	WindowManagerMorph current ifNotNil: [:m| m windowOpen: self]! !
 
-	(self focusKeyboardFor: aKeyboardEvent)
-		ifTrue: [ ^ self ].
-		
-	"Allow instances to dynamically use properties for handling common events."
-	self 
-		valueOfProperty: #'keyStroke:'
-		ifPresentDo: [ :handler | handler value: aKeyboardEvent ]! !
-
-!Theme methodsFor: '*morphic-dwm' stamp: 'len 5/12/2019 12:55:59'!
-keyStroke: aKeyboardEvent morph: aMorph
-	^ false! !
+!KeyboardEvent methodsFor: '*morphic-dwm-dispatching' stamp: 'len 5/22/2020 08:59:19'!
+sentTo: aMorph localPosition: positionInAMorph
+	"Dispatch the receiver into aMorph."
+	type == #keystroke ifTrue: [
+		"First, give a chance to the window manager to handle the event.
+		This is used for global shortcuts such as command-w for closing a window."
+		(WindowManagerMorph current ifNotNil: [:m| m keyStroke: self morph: aMorph] ifNil: [false])
+			ifFalse:
+				[^ aMorph
+					processKeystroke: self
+					localPosition: positionInAMorph ]].
+	type == #keyDown ifTrue: [
+		^ aMorph
+			processKeyDown: self
+			localPosition: positionInAMorph ].
+	type == #keyUp ifTrue: [ 
+		^ aMorph
+			processKeyUp: self
+			localPosition: positionInAMorph ].
+	^ super
+		sentTo: aMorph
+		localPosition: positionInAMorph.! !
