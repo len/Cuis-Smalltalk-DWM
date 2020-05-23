@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4163] on 22 May 2020 at 12:55:13 pm'!
+'From Cuis 5.0 [latest update: #4163] on 22 May 2020 at 7:38:48 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 39!
+!provides: 'Morphic-DWM' 1 43!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -167,7 +167,7 @@ switchToPage: anInteger
 	self step.
 	self redrawNeeded! !
 
-!WindowManagerMorph methodsFor: 'drawing' stamp: 'len 5/22/2020 12:48:49'!
+!WindowManagerMorph methodsFor: 'drawing' stamp: 'len 5/22/2020 15:49:34'!
 drawOn: aCanvas
 	| font w rect |
 	aCanvas fillRectangle: self morphLocalBounds color: color.
@@ -179,7 +179,7 @@ drawOn: aCanvas
 			ifTrue: [aCanvas fillRectangle: (rect insetBy: 1) color: Color black].
 		aCanvas
 			drawString: i printString
-			at: rect topLeft + (3@1)
+			at: rect topLeft + (2@1)
 			font: font
 			color: (page == currentPage ifTrue: [Color white] ifFalse: [page isEmpty ifTrue: [Color black] ifFalse: [Color gray]]).
 		rect _ rect translatedBy: w@0].
@@ -190,7 +190,7 @@ drawOn: aCanvas
 			font: font
 			color: Color black]"! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 11:03:11'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 13:09:35'!
 keyStroke: aKeyboardEvent morph: aMorph
 	"Handle global shortcuts. Return true if the event was handled, false otherwise."
 	| i |
@@ -198,11 +198,11 @@ keyStroke: aKeyboardEvent morph: aMorph
 	Control key is reserved for normal shortcuts (local shortcuts, defined by a morph)."
 	(aKeyboardEvent controlKeyPressed or: [aKeyboardEvent commandAltKeyPressed not]) ifTrue: [^false].
 
-	aKeyboardEvent keyValue = $w asciiValue
-		ifTrue: [aMorph owningWindow ifNotNil: [:w| w delete. ^true]].
-	aKeyboardEvent keyValue = 27
+	aKeyboardEvent isEsc
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| w fullScreen. ^true]].
-	aKeyboardEvent keyValue = $t asciiValue
+	aKeyboardEvent keyCharacter = $w
+		ifTrue: [aMorph owningWindow ifNotNil: [:w| w delete. ^true]].
+	aKeyboardEvent keyCharacter = $t
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| currentPage windowToggleTiling: w windowsArea: self windowsArea. ^true]].
 
 	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
@@ -211,21 +211,21 @@ keyStroke: aKeyboardEvent morph: aMorph
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| self moveWindow: w toPage: i; switchToPage: i. ^true]].
 
 	"Shortcuts to open new windows:"
-	aKeyboardEvent keyValue = $B asciiValue
+	aKeyboardEvent keyCharacter = $B
 		ifTrue: [BrowserWindow openBrowser. ^true].
-	aKeyboardEvent keyValue = $W asciiValue
+	aKeyboardEvent keyCharacter = $W
 		ifTrue: [Workspace new contents: ''; openLabel: 'Workspace'. ^true].
-	aKeyboardEvent keyValue = $T asciiValue
+	aKeyboardEvent keyCharacter = $T
 		ifTrue: [TranscriptWindow openTranscript. ^true].
-	aKeyboardEvent keyValue = $P asciiValue
+	aKeyboardEvent keyCharacter = $P
 		ifTrue: [CodePackageListWindow openPackageList. ^true].
-	aKeyboardEvent keyValue = $F asciiValue
+	aKeyboardEvent keyCharacter = $F
 		ifTrue: [FileListWindow openFileList. ^true].
-	aKeyboardEvent keyValue = $C asciiValue
+	aKeyboardEvent keyCharacter = $C
 		ifTrue: [ChangeSorterWindow open: ChangeSorter new label: nil. ^true].
-	aKeyboardEvent keyValue = $R asciiValue
+	aKeyboardEvent keyCharacter = $R
 		ifTrue: [TestRunnerWindow openTestRunner. ^true].
-	aKeyboardEvent keyValue = $M asciiValue
+	aKeyboardEvent keyCharacter = $M
 		ifTrue: [MessageNamesWindow open: MessageNames new label: 'Message Names'. ^true].
 	^ false! !
 
@@ -243,10 +243,10 @@ windowOpen: aSystemWindow
 	currentPage windowOpen: aSystemWindow.
 	aSystemWindow addHalo! !
 
-!WindowManagerMorph methodsFor: 'initialization' stamp: 'len 5/22/2020 12:39:43'!
+!WindowManagerMorph methodsFor: 'initialization' stamp: 'len 5/22/2020 15:41:20'!
 initialize
 	super initialize.
-	self color: (Color white alpha: 0.2).
+	self color: (Color white alpha: 0.15).
 	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
 	currentPage _ pages first! !
 
@@ -279,9 +279,9 @@ step
 			self redrawNeeded]."
 	self comeToFront! !
 
-!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/22/2020 12:36:46'!
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/22/2020 14:12:09'!
 stepTime
-	^ 500! !
+	^ 1000! !
 
 !WindowManagerMorph methodsFor: 'submorphs-accessing' stamp: 'len 5/22/2020 09:30:25'!
 noteNewOwner: aMorph
@@ -470,9 +470,9 @@ browser
 changeSorter
 	^ Color lightBlue duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 6/9/2016 00:06'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/22/2020 18:08:30'!
 debugger
-	^ Color lightRed! !
+	^ Color lightRed darker! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 11/16/2015 02:16'!
 defaultWindowColor
@@ -828,15 +828,15 @@ openInWorld
 	super openInWorld.
 	WindowManagerMorph current ifNotNil: [:m| m windowOpen: self]! !
 
-!KeyboardEvent methodsFor: '*morphic-dwm-dispatching' stamp: 'len 5/22/2020 08:59:19'!
+!KeyboardEvent methodsFor: '*morphic-dwm-dispatching' stamp: 'len 5/22/2020 15:26:37'!
 sentTo: aMorph localPosition: positionInAMorph
 	"Dispatch the receiver into aMorph."
 	type == #keystroke ifTrue: [
 		"First, give a chance to the window manager to handle the event.
 		This is used for global shortcuts such as command-w for closing a window."
-		(WindowManagerMorph current ifNotNil: [:m| m keyStroke: self morph: aMorph] ifNil: [false])
+		^ (WindowManagerMorph current ifNotNil: [:m| m keyStroke: self morph: aMorph] ifNil: [false])
 			ifFalse:
-				[^ aMorph
+				[ aMorph
 					processKeystroke: self
 					localPosition: positionInAMorph ]].
 	type == #keyDown ifTrue: [
