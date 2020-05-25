@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4163] on 22 May 2020 at 7:38:48 pm'!
+'From Cuis 5.0 [latest update: #4173] on 25 May 2020 at 8:09:46 am'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 43!
+!provides: 'Morphic-DWM' 1 44!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -257,27 +257,10 @@ reset
 	currentPage _ pages first.
 	SystemWindow allSubInstances do: [:each|each isInWorld ifTrue: [self addWindow: each]]! !
 
-!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/22/2020 12:36:35'!
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/25/2020 08:07:27'!
 step
-"	| window hand |
-	hand _ self runningWorld activeHand.
-	window _ (hand keyboardFocus ifNil: [hand world submorphs detect: [:one| one morphContainsPoint: hand morphPosition] ifNone: []]) ifNotNil: [:aMorph| aMorph owningWindow].
-	window == activeWindow
-		ifFalse:
-			[(activeWindow _ window) isNil
-				ifTrue:
-					[color _ Color veryDarkGray.
-					activeWindowLabel _ '']
-				ifFalse:
-					[color _ activeWindow borderColor.
-					activeWindowLabel _ activeWindow label].
-			self redrawNeeded.
-			^ self].
-	(activeWindow notNil and: [activeWindow label ~~ activeWindowLabel])
-	 	ifTrue:
-			[activeWindowLabel _ activeWindow label.
-			self redrawNeeded]."
-	self comeToFront! !
+	self comeToFront.
+	self updateBounds! !
 
 !WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/22/2020 14:12:09'!
 stepTime
@@ -327,24 +310,21 @@ font
 screenSizeChanged
 	UISupervisor whenUIinSafeState: [self updateBounds]! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 12:43:56'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/25/2020 08:09:00'!
 updateBounds
-	| area |
-"at bottom:
-	self world ifNotNil: [:w| self morphPosition: 0@(w morphHeight - self defaultHeight) extent: w morphExtent x @ self defaultHeight].
-at top:
-	self world ifNotNil: [:w| self morphPosition: 0@0 extent: w morphExtent x @ self defaultHeight]."
-	self world ifNotNil: [:w| self morphPosition: w morphWidth - self defaultWidth @(w morphHeight - self defaultHeight) extent: w morphExtent x @ self defaultHeight].
+	| world newPosition area |
+	world _ self world ifNil: [^ self].
+	newPosition _ world morphWidth - self defaultWidth @ (world morphHeight - self defaultHeight).
+	self morphPosition rounded = newPosition rounded ifTrue: [^ self].
+	self morphPosition: newPosition extent: self defaultWidth @ self defaultHeight.
 	area _ self windowsArea.
 	pages do: [:each| each updateBounds: area]! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 12:40:47'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/25/2020 08:07:35'!
 windowsArea
 	| allowedArea |
 	allowedArea _ Display boundingBox.
-	self world ifNotNil: [:w|
-		allowedArea _ allowedArea intersect: w viewBox.
-		"self morphBoundsInWorld ifNotNil: [:r| allowedArea _ (allowedArea areasOutside: r) first ]"].
+	self world ifNotNil: [:w| allowedArea _ allowedArea intersect: w viewBox].
 	^allowedArea! !
 
 !WindowManagerMorph class methodsFor: 'as yet unclassified' stamp: 'len 5/22/2020 08:33:15'!
