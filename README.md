@@ -17,11 +17,11 @@ A browser on fullscreen:
 
 ## Installation
 
-Install it as a Cuis package from a file list window. For customization, edit DWMTheme>>initialize and WindowManager>>keyStroke:morph.
+Install it as a Cuis package from a file list window. For customization, edit DWMTheme>>initialize and WindowManagerMorph>>keyStroke:morph.
 
 To activate it you must select the DWMTheme from the world menu or by doing "DWMTheme beCurrent", then close all windows.
 
-In the screenshots I'm using the DejaVu Mono font, that can be installed from the AdditionalFonts/ directory. If you notice some green shadow in text over black background, you can "Preferences disable: #subPixelRenderColorFonts" or use 'DejaVu Mono' that currently doesn't have this problem.
+In the screenshots I'm using the TrueType DejaVu Sans font, that can be installed from the preferences menu with 'Install additional fonts' and then set with 'Set font'.
 
 ## Keyboard shortcuts
 
@@ -33,8 +33,8 @@ alt-t to toggle the focused window between tiling or floating modes
 
 alt-w to close a window
 
-alt-1 to alt-8 to switch to another page
+alt-1 to alt-8 to switch to another page (at the bottom right you can see the currently page and which pages have windows)
 
-alt-shift-1 to alt-shift-8 to move the focused window to another page
+alt-shift-1 to alt-shift-8 to switch to another page bringing the focused (floting) window to the new page
 
 alt-shift-B to open a browser, W open a workspace, C a changesorter, etc.
