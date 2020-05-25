@@ -21,11 +21,11 @@ Install it as a Cuis package from a file list window. For customization, edit DW
 
 To activate it you must select the DWMTheme from the world menu or by doing "DWMTheme beCurrent", then close all windows.
 
-In the screenshots I'm using the TrueType DejaVu Sans font, that can be installed from the preferences menu with 'Install additional fonts' and then set with 'Set font'.
+In the screenshots I'm using the TrueType DejaVu Sans font, that can be installed from the preferences menu with 'Install extra fonts' and then set with 'Set font'.
 
 ## Keyboard shortcuts
 
-Shotcuts can be customized in WindowManager>>keyStroke:morph:. Here are some default shortcuts:
+Shotcuts can be customized in WindowManagerMorph>>keyStroke:morph:. Here are some default shortcuts:
 
 alt-esc to toggle the focused (floating) window to/from full screen mode
 
