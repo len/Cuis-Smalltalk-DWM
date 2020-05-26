@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4173] on 25 May 2020 at 8:09:46 am'!
+'From Cuis 5.0 [latest update: #4173] on 26 May 2020 at 11:43:52 am'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 44!
+!provides: 'Morphic-DWM' 1 45!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -552,7 +552,7 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 5/22/2020 12:37:07'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 5/25/2020 13:47:55'!
 initialize
 	super initialize.
 "	family _ 'DejaVu Sans'.
@@ -572,12 +572,10 @@ initialize
 	Preferences enable: #italicsInShout.
 	Preferences disable: #shoutInWorkspaces.
 	Preferences enable: #optionalButtons.
+	Preferences useAlwaysLeftArrow.
 
 	SHTextStylerST80 initialize.
 
-"	StrikeFont allInstancesDo: [:each| each useLeftArrow].
-	TTFontDescription allInstancesDo: [:each| each useLeftArrow].
-"
 	Preferences installHaloSpecsFromArray: self iconicHaloSpecifications.
 	
 	Smalltalk garbageCollect.
@@ -725,9 +723,11 @@ refresh
 updateBounds
 	self runningWorld submorphs do: [:one| (one isKindOf: WindowManagerMorph) ifTrue: [^ self updateBounds: one windowsArea]]! !
 
-!WindowManagerPage methodsFor: 'private' stamp: 'len 5/22/2020 08:56:43'!
+!WindowManagerPage methodsFor: 'private' stamp: 'len 5/26/2020 11:42:44'!
 updateBounds: windowsArea
-	tilingMorph ifNotNil: [tilingMorph morphPosition: windowsArea topLeft extent: windowsArea extent]! !
+	tilingMorph ifNotNil: [tilingMorph morphPosition: windowsArea topLeft extent: windowsArea extent].
+	windows do: [:each| (each hasProperty: #originalBounds) ifTrue: [each morphPosition: windowsArea topLeft extent: windowsArea extent]]
+! !
 
 !SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 11/19/2015 07:44'!
 quit
