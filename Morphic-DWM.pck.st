@@ -1,6 +1,6 @@
-'From Cuis 5.0 [latest update: #4173] on 26 May 2020 at 11:43:52 am'!
+'From Cuis 5.0 [latest update: #4190] on 31 May 2020 at 6:34:46 am'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 45!
+!provides: 'Morphic-DWM' 1 50!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -384,23 +384,23 @@ scrollbarColor
 scrollbarSliderShadowColor
 	^Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 5/24/2019 07:09:24'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 5/27/2020 16:42:18'!
 shout
 	^ {
 		#selector  				-> nil.
 		#defaults 				-> #white.
-		#undefined 				-> #(lightRed lighter lighter lighter lighter).
+		#undefined 				-> #white. "#(lightRed lighter lighter lighter lighter)."
 		#comment 				-> #(lightGray lighter).
-		#literals 				-> #(lightBlue lighter lighter).
+		#literals 				-> #(lightBlue lighter).
 		#pseudoVariables 		-> '#FF709C'. "and bold"
 		#messages 				-> #(white).
 		#incompleteMessages	-> #(white).
 		#arguments 				-> #(lightYellow lighter).
-		#instVar 				-> '#95CBFF'.
-		#classVar 				-> '#95CBFF'. "but bold"
+		#instVar 				-> #(lightGreen).
 		#tempBar 				-> #(white darker).
-		#tempVars 				-> '#E6DAA6'.
-		#blockTemps				-> '#5CFFA7'.
+		#tempVars				-> '#F0FFC4'.
+"		#blockTemps				-> '#5CFFA7'."
+		#blockTemps				-> '#ADFFD3'.
 "		#block 					-> #(white)."
 		#blockLevelZero		-> #(white).
 		#blockLevelOne 		-> #(red muchLighter).
@@ -442,13 +442,17 @@ unfocusedTextHighlightFrom: aColor
 windowLabel
 	^ Color white! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:19:09'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:15'!
 browser
 	^ Color lightGreen duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:35:34'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:47:12'!
+changeList
+	^ Color lightCyan duller! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:26:06'!
 changeSorter
-	^ Color lightBlue duller! !
+	^ Color lightCyan duller! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/22/2020 18:08:30'!
 debugger
@@ -458,35 +462,39 @@ debugger
 defaultWindowColor
 	^ Color gray darker! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:25:09'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 20:03:55'!
+fileContentsBrowser
+	^ Color tan! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:21:54'!
 fileList
-	^ Color lightMagenta lighter duller! !
+	^ Color lightMagenta duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/1/2020 06:26:42'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:27'!
 messageNames
-	^ Color lightGreen! !
+	^ Color lightBlue duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/1/2020 06:25:52'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:35'!
 messageSet
 	^ Color lightBlue duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:20:11'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 20:03:15'!
 packageList
-	^ Color lightOrange duller! !
+	^ Color tan! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/1/2020 06:27:27'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 20:06:47'!
 testRunner
-	^ Color lightBlue! !
+	^ Color blue quiteWhiter duller! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 6/25/2016 20:25'!
 transcript
 	^ Color lightOrange! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/1/2020 06:27:39'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:35:48'!
 versionsBrowser
-	^ Color lightBlue! !
+	^ Color pink whiter duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2019 12:22:05'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:42:16'!
 workspace
 	^ Color lightYellow duller! !
 
@@ -552,7 +560,7 @@ iconicHaloSpecifications
 "	(addRecolorHandle:			right				bottomCenter	(magenta darker)			haloColorIcon 				'Change color')"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 5/25/2020 13:47:55'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 5/30/2020 16:45:39'!
 initialize
 	super initialize.
 "	family _ 'DejaVu Sans'.
@@ -570,8 +578,10 @@ initialize
 	Preferences enable: #dismissAllOnOptionClose.
 	Preferences enable: #subPixelRenderColorFonts.
 	Preferences enable: #italicsInShout.
-	Preferences disable: #shoutInWorkspaces.
-	Preferences enable: #optionalButtons.
+	Preferences enable: #shoutInWorkspaces.
+	Preferences disable: #optionalButtons.
+	Preferences enable: #showAnnotations.
+	Preferences disable: #usePreDebugWindow.
 	Preferences useAlwaysLeftArrow.
 
 	SHTextStylerST80 initialize.
@@ -597,7 +607,7 @@ menuTitleBar
 textPane
 	^ Color black! !
 
-!DWMTheme methodsFor: 'private - shout mappings' stamp: 'len 5/24/2019 07:08:49'!
+!DWMTheme methodsFor: 'private - shout mappings' stamp: 'len 5/27/2020 16:24:38'!
 generateShoutConfig
 
 	| styles colors |
@@ -630,7 +640,7 @@ generateShoutConfig
 		{self assignment . nil . #(#bold #withST80Glyphs)}.
 		{self return . nil . #(#bold #withST80Glyphs)}.
 		{self tempVars . colors at: #tempVars . self italic}.
-		{self blockTemps . colors at: #tempBar . self italic}
+		{self blockTemps . colors at: #blockTemps . self italic}
 	} do: [ :style |
 		styles addAll:
 			(style first
@@ -643,12 +653,12 @@ generateShoutConfig
 	styles addAll: {
 		{#unfinishedString . colors at: #undefined . #normal}.
 		{#undefinedIdentifier . colors at: #undefined .#bold}.
-		{#unfinishedComment . colors at: #pseudoVariables . self italic}.
+		{#unfinishedComment . colors at: #undefined . self italic}.
 		{#comment . colors at: #comment . self italic}.
-		{#string . colors at: #instVar . #normal}.
+		{#string . colors at: #literals . #normal}.
 		{#literal . nil . self italic}.
-		{#incompleteIdentifier . colors at: #tempVars . {#italic. #underlined}}.
-		{#classVar . colors at: #tempVars . #bold}.
+		{#incompleteIdentifier . colors at: #incompleteMessages . {#italic. #underlined}}.
+		{#classVar . colors at: #instVar . #bold}.
 	}.
 
 	^ styles! !
@@ -741,7 +751,20 @@ save
 saveAndQuit
 	^ self snapshot: true andQuit: true clearAllClassState: false! !
 
-!RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 10:07:46'!
+!RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'jmv 3/15/2017 14:06:54'!
+maximumUsableAreaInWorld: aWorldOrNil
+
+	| allowedArea |
+	allowedArea _ Display boundingBox.
+	aWorldOrNil ifNotNil: [
+		allowedArea _ allowedArea intersect: aWorldOrNil viewBox.
+		aWorldOrNil taskbar ifNotNil: [ :tb |
+			tb morphBoundsInWorld ifNotNil: [ :r |
+				allowedArea _ (allowedArea areasOutside: r) first ]]].
+	^allowedArea
+! !
+
+!RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'len 5/30/2020 16:27:52'!
 screenTopSetback
 	^ 16! !
 
