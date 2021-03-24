@@ -1,56 +1,56 @@
-'From Cuis 5.0 [latest update: #4542] on 24 March 2021 at 12:49:39 pm'!
+'From Cuis 5.0 [latest update: #4542] on 24 March 2021 at 3:21:39 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 52!
-SystemOrganization addCategory: 'Morphic-DWM'!
+!provides: 'Morphic-DWM' 1 54!
+SystemOrganization addCategory: #'Morphic-DWM'!
 
 
-!classDefinition: #WindowManagerMorph category: 'Morphic-DWM'!
+!classDefinition: #WindowManagerMorph category: #'Morphic-DWM'!
 KernelMorph subclass: #WindowManagerMorph
 	instanceVariableNames: 'pages currentPage'
 	classVariableNames: 'Current'
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowManagerMorph class' category: 'Morphic-DWM'!
+!classDefinition: 'WindowManagerMorph class' category: #'Morphic-DWM'!
 WindowManagerMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #WindowStackMorph category: 'Morphic-DWM'!
+!classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowStackMorph class' category: 'Morphic-DWM'!
+!classDefinition: 'WindowStackMorph class' category: #'Morphic-DWM'!
 WindowStackMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #WindowTilingMorph category: 'Morphic-DWM'!
+!classDefinition: #WindowTilingMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowTilingMorph
 	instanceVariableNames: 'mainWindow stack'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowTilingMorph class' category: 'Morphic-DWM'!
+!classDefinition: 'WindowTilingMorph class' category: #'Morphic-DWM'!
 WindowTilingMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #DWMTheme category: 'Morphic-DWM'!
+!classDefinition: #DWMTheme category: #'Morphic-DWM'!
 Theme subclass: #DWMTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'DWMTheme class' category: 'Morphic-DWM'!
+!classDefinition: 'DWMTheme class' category: #'Morphic-DWM'!
 DWMTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #WindowManagerPage category: 'Morphic-DWM'!
+!classDefinition: #WindowManagerPage category: #'Morphic-DWM'!
 Object subclass: #WindowManagerPage
 	instanceVariableNames: 'tilingMorph windows'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowManagerPage class' category: 'Morphic-DWM'!
+!classDefinition: 'WindowManagerPage class' category: #'Morphic-DWM'!
 WindowManagerPage class
 	instanceVariableNames: ''!
 
@@ -223,9 +223,9 @@ defaultHeight
 defaultWidth
 	^ self font lineSpacing * 8 + 2! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 10:49:27'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 3/24/2021 14:01:30'!
 font
-	^ (FontFamily familyNamed: FontFamily defaultFamilyName) atPointSize: 8! !
+	^ (FontFamily familyNamed: FontFamily defaultFamilyName) atPointSize: 12! !
 
 !WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 08:09:22'!
 screenSizeChanged
@@ -256,6 +256,11 @@ current
 privateAddMorph: aMorph atIndex: anInteger
 	aMorph owner == self ifTrue: [^ self].
 	super privateAddMorph: aMorph atIndex: anInteger! !
+
+!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:15:44'!
+privateMoveFrontMorph: aMorph
+	aMorph owner == self ifTrue: [^ self].
+	^ super privateMoveFrontMorph: aMorph! !
 
 !WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:57'!
 removedMorph: aMorph
@@ -289,6 +294,16 @@ addWindow: aSystemWindow
 privateAddMorph: aMorph atIndex: anInteger
 	aMorph owner == self ifTrue: [^ self].
 	super privateAddMorph: aMorph atIndex: anInteger! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:14:40'!
+privateMoveBackMorph: aMorph
+	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
+	^ super privateMoveBackMorph: aMorph! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:14:02'!
+privateMoveFrontMorph: aMorph
+	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
+	^ super privateMoveFrontMorph: aMorph! !
 
 !WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:56'!
 removedMorph: aMorph
@@ -512,9 +527,9 @@ embossedTitles
 fullScreenDeskMargin
 	^ 0! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/14/2015 03:38'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 3/24/2021 15:19:57'!
 layoutAdjusterThickness
-	^ 1! !
+	^ 2! !
 
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:25'!
 minimalWindows
@@ -528,9 +543,9 @@ roundButtons
 roundWindowCorners
 	^ false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/14/2015 04:29'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 3/24/2021 15:21:16'!
 scrollbarThickness
-	^ 6! !
+	^ 12! !
 
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:10'!
 useTaskbar
@@ -564,10 +579,13 @@ iconicHaloSpecifications
 	"
 )! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 5/30/2020 16:45:39'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 3/24/2021 13:23:45'!
 initialize
 	super initialize.
-"	family _ 'DejaVu Sans'.
+"
+	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
+	
+	family _ 'DejaVu Sans'.
 	codeFamily _ 'DejaVu Sans'.
 	Preferences setDefaultFonts: {
 		{#setSystemFontTo:. family. 10}.
@@ -682,7 +700,7 @@ show
 	tilingMorph notNil ifTrue: [tilingMorph visible: true].
 	windows do: [:each | each visible ifFalse: [each visible: true]]! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 5/22/2020 09:04:47'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 3/24/2021 13:46:04'!
 windowToggleTiling: aSystemWindow windowsArea: windowsArea
 	| possibleBounds |
 	aSystemWindow isInWorld ifFalse: [^ self].
@@ -694,7 +712,7 @@ windowToggleTiling: aSystemWindow windowsArea: windowsArea
 			self updateBounds: windowsArea].
 	aSystemWindow owner == aSystemWindow world
 		ifTrue:
-			[aSystemWindow setProperty: #floatingBounds toValue: aSystemWindow morphBoundsInWorld.
+			[aSystemWindow setProperty: #floatingBounds toValue: aSystemWindow displayBounds.
 			tilingMorph addWindow: aSystemWindow]
 		ifFalse:
 			[aSystemWindow world addMorphFront: aSystemWindow.
