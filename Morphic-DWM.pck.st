@@ -1,56 +1,56 @@
-'From Cuis 5.0 [latest update: #4542] on 24 March 2021 at 3:21:39 pm'!
+'From Cuis 6.0 [latest update: #5053] on 28 January 2022 at 4:14:21 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 54!
-SystemOrganization addCategory: #'Morphic-DWM'!
+!provides: 'Morphic-DWM' 1 59!
+SystemOrganization addCategory: 'Morphic-DWM'!
 
 
-!classDefinition: #WindowManagerMorph category: #'Morphic-DWM'!
-KernelMorph subclass: #WindowManagerMorph
-	instanceVariableNames: 'pages currentPage'
-	classVariableNames: 'Current'
-	poolDictionaries: ''
-	category: 'Morphic-DWM'!
-!classDefinition: 'WindowManagerMorph class' category: #'Morphic-DWM'!
-WindowManagerMorph class
-	instanceVariableNames: ''!
-
-!classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
+!classDefinition: #WindowStackMorph category: 'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowStackMorph class' category: #'Morphic-DWM'!
+!classDefinition: 'WindowStackMorph class' category: 'Morphic-DWM'!
 WindowStackMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #WindowTilingMorph category: #'Morphic-DWM'!
+!classDefinition: #WindowTilingMorph category: 'Morphic-DWM'!
 LayoutMorph subclass: #WindowTilingMorph
 	instanceVariableNames: 'mainWindow stack'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowTilingMorph class' category: #'Morphic-DWM'!
+!classDefinition: 'WindowTilingMorph class' category: 'Morphic-DWM'!
 WindowTilingMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #DWMTheme category: #'Morphic-DWM'!
+!classDefinition: #WindowManagerMorph category: 'Morphic-DWM'!
+BoxedMorph subclass: #WindowManagerMorph
+	instanceVariableNames: 'pages currentPage ownerExtent'
+	classVariableNames: 'Current'
+	poolDictionaries: ''
+	category: 'Morphic-DWM'!
+!classDefinition: 'WindowManagerMorph class' category: 'Morphic-DWM'!
+WindowManagerMorph class
+	instanceVariableNames: ''!
+
+!classDefinition: #DWMTheme category: 'Morphic-DWM'!
 Theme subclass: #DWMTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'DWMTheme class' category: #'Morphic-DWM'!
+!classDefinition: 'DWMTheme class' category: 'Morphic-DWM'!
 DWMTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #WindowManagerPage category: #'Morphic-DWM'!
+!classDefinition: #WindowManagerPage category: 'Morphic-DWM'!
 Object subclass: #WindowManagerPage
 	instanceVariableNames: 'tilingMorph windows'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowManagerPage class' category: #'Morphic-DWM'!
+!classDefinition: 'WindowManagerPage class' category: 'Morphic-DWM'!
 WindowManagerPage class
 	instanceVariableNames: ''!
 
@@ -60,6 +60,100 @@ printOn: aStream
 	aStream nextPut: $[.
 	windows do: [:each | aStream print: each] separatedBy: [aStream nextPutAll: '; '].
 	aStream nextPut: $]! !
+
+!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:14'!
+privateAddMorph: aMorph atIndex: anInteger
+	aMorph owner == self ifTrue: [^ self].
+	super privateAddMorph: aMorph atIndex: anInteger! !
+
+!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:15:44'!
+privateMoveFrontMorph: aMorph
+	aMorph owner == self ifTrue: [^ self].
+	^ super privateMoveFrontMorph: aMorph! !
+
+!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:57'!
+removedMorph: aMorph
+	super removedMorph: aMorph.
+"	owner notNil ifTrue: [owner stackChanged]."
+	self layoutSubmorphs! !
+
+!WindowTilingMorph methodsFor: 'initialization' stamp: 'len 11/19/2015 07:24'!
+initialize
+	super initialize.
+	self sticky: true! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:58'!
+addMorphBack: aMorph
+	aMorph owner == self ifTrue: [^ self].
+	^ super addMorphBack: aMorph! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 04:31'!
+addMorphFront: aMorph
+	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
+	^ super addMorphFront: aMorph! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/16/2015 05:45'!
+addWindow: aSystemWindow
+	aSystemWindow layoutSpec: (LayoutSpec proportionalWidth: 1 proportionalHeight: 1).
+	self addMorphBack: aSystemWindow.
+	mainWindow notNil ifTrue: [self pushWindow].
+	mainWindow _ aSystemWindow.! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:15'!
+privateAddMorph: aMorph atIndex: anInteger
+	aMorph owner == self ifTrue: [^ self].
+	super privateAddMorph: aMorph atIndex: anInteger! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:14:40'!
+privateMoveBackMorph: aMorph
+	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
+	^ super privateMoveBackMorph: aMorph! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:14:02'!
+privateMoveFrontMorph: aMorph
+	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
+	^ super privateMoveFrontMorph: aMorph! !
+
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:56'!
+removedMorph: aMorph
+	aMorph == mainWindow
+		ifTrue: [mainWindow _ nil]
+		ifFalse: [aMorph == stack ifTrue: [stack _ nil]]! !
+
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 13:45'!
+popWindow
+	"There's no main window, pop a window from the stack and set it as main window."
+	stack isNil ifTrue: [^ self].
+	mainWindow _ stack submorphs detect: [:one | one is: #SystemWindow] ifNone: [].
+	mainWindow isNil ifTrue: [^ self removeStack].
+	self addMorphBack: mainWindow.
+	stack hasSubmorphs ifFalse: [self removeStack]! !
+
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/17/2015 03:35'!
+pushWindow
+	"Make room available for a new main window. Push the current main window to the stack."
+	mainWindow isNil ifTrue: [^ self].
+	stack isNil
+		ifTrue:
+			[stack _ direction == #vertical
+				ifTrue: [WindowStackMorph newRow layoutSpec: (LayoutSpec proportionalWidth: 1 proportionalHeight: 1); yourself]
+				ifFalse: [WindowStackMorph newColumn layoutSpec: (LayoutSpec proportionalWidth: 0.8 proportionalHeight: 1); yourself].
+			stack color: self color.
+			self addMorphFront: stack].
+	stack addMorphBack: mainWindow! !
+
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 5/22/2020 09:13:49'!
+refresh
+	mainWindow isNil ifTrue: [self popWindow].
+	stack isNil ifFalse: [stack hasSubmorphs not ifTrue: [self removeStack]].
+	stack isNil ifFalse: [stack layoutSubmorphs].
+	self layoutSubmorphs! !
+
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 04:38'!
+removeStack
+	stack isNil ifTrue: [^ self].
+	stack delete.
+	stack _ nil! !
 
 !WindowManagerMorph methodsFor: 'actions' stamp: 'len 5/22/2020 10:33:53'!
 moveWindow: aSystemWindow toPage: anInteger
@@ -159,10 +253,10 @@ windowClosed: aSystemWindow
 		(currentIndex - 1 to: 1 by: -1), (currentIndex + 1 to: pages size)
 			do: [:i| (pages at: i) isEmpty ifFalse: [^ self switchToPage: i]]]"! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 08:43:48'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 1/28/2022 12:33:32'!
 windowOpen: aSystemWindow
 	currentPage windowOpen: aSystemWindow.
-	aSystemWindow addHalo! !
+"	aSystemWindow addHalo"! !
 
 !WindowManagerMorph methodsFor: 'initialization' stamp: 'len 5/22/2020 15:41:20'!
 initialize
@@ -178,33 +272,30 @@ reset
 	currentPage _ pages first.
 	SystemWindow allSubInstances do: [:each|each isInWorld ifTrue: [self addWindow: each]]! !
 
-!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/25/2020 08:07:27'!
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 1/28/2022 15:41:29'!
 step
+	| newOwnerExtent |
 	self comeToFront.
-	self updateBounds! !
+	newOwnerExtent _ owner morphExtent.
+	ownerExtent = newOwnerExtent ifFalse: [self updateBounds. ownerExtent _ newOwnerExtent]! !
 
-!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/22/2020 14:12:09'!
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 1/28/2022 12:29:04'!
 stepTime
 	^ 1000! !
 
-!WindowManagerMorph methodsFor: 'submorphs-accessing' stamp: 'len 5/22/2020 09:30:25'!
+!WindowManagerMorph methodsFor: 'submorphs-accessing' stamp: 'len 1/28/2022 15:40:05'!
 noteNewOwner: aMorph
 	"I have just been added as a submorph of aMorph"
-	Current ifNotNil: [:m| Display removeActionsWithReceiver: m. Current delete].
+	Current ifNotNil: [:m| Current delete].
 	Current _ self.
 	super noteNewOwner: aMorph.
 	self reset.
-	Display
-		when: #screenSizeChanged
-		send: #screenSizeChanged
-		to: self.
 	self updateBounds! !
 
-!WindowManagerMorph methodsFor: 'submorphs-add/remove' stamp: 'len 5/22/2020 09:17:45'!
+!WindowManagerMorph methodsFor: 'submorphs-add/remove' stamp: 'len 1/28/2022 15:39:38'!
 delete
 	pages do: [:each| each delete].
 	super delete.
-	Display removeActionsWithReceiver: self.
 	Current == self ifTrue: [Current _ nil]! !
 
 !WindowManagerMorph methodsFor: 'testing' stamp: 'len 5/19/2020 12:23:50'!
@@ -227,10 +318,6 @@ defaultWidth
 font
 	^ (FontFamily familyNamed: FontFamily defaultFamilyName) atPointSize: 12! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 08:09:22'!
-screenSizeChanged
-	UISupervisor whenUIinSafeState: [self updateBounds]! !
-
 !WindowManagerMorph methodsFor: 'private' stamp: 'len 5/25/2020 08:09:00'!
 updateBounds
 	| world newPosition area |
@@ -251,100 +338,6 @@ windowsArea
 !WindowManagerMorph class methodsFor: 'as yet unclassified' stamp: 'len 5/22/2020 08:33:15'!
 current
 	^ Current! !
-
-!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:14'!
-privateAddMorph: aMorph atIndex: anInteger
-	aMorph owner == self ifTrue: [^ self].
-	super privateAddMorph: aMorph atIndex: anInteger! !
-
-!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:15:44'!
-privateMoveFrontMorph: aMorph
-	aMorph owner == self ifTrue: [^ self].
-	^ super privateMoveFrontMorph: aMorph! !
-
-!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:57'!
-removedMorph: aMorph
-	super removedMorph: aMorph.
-"	owner notNil ifTrue: [owner stackChanged]."
-	self layoutSubmorphs! !
-
-!WindowTilingMorph methodsFor: 'initialization' stamp: 'len 11/19/2015 07:24'!
-initialize
-	super initialize.
-	self sticky: true! !
-
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:58'!
-addMorphBack: aMorph
-	aMorph owner == self ifTrue: [^ self].
-	^ super addMorphBack: aMorph! !
-
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 04:31'!
-addMorphFront: aMorph
-	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
-	^ super addMorphFront: aMorph! !
-
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/16/2015 05:45'!
-addWindow: aSystemWindow
-	aSystemWindow layoutSpec: (LayoutSpec proportionalWidth: 1 proportionalHeight: 1).
-	self addMorphBack: aSystemWindow.
-	mainWindow notNil ifTrue: [self pushWindow].
-	mainWindow _ aSystemWindow.! !
-
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:15'!
-privateAddMorph: aMorph atIndex: anInteger
-	aMorph owner == self ifTrue: [^ self].
-	super privateAddMorph: aMorph atIndex: anInteger! !
-
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:14:40'!
-privateMoveBackMorph: aMorph
-	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
-	^ super privateMoveBackMorph: aMorph! !
-
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:14:02'!
-privateMoveFrontMorph: aMorph
-	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
-	^ super privateMoveFrontMorph: aMorph! !
-
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:56'!
-removedMorph: aMorph
-	aMorph == mainWindow
-		ifTrue: [mainWindow _ nil]
-		ifFalse: [aMorph == stack ifTrue: [stack _ nil]]! !
-
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 13:45'!
-popWindow
-	"There's no main window, pop a window from the stack and set it as main window."
-	stack isNil ifTrue: [^ self].
-	mainWindow _ stack submorphs detect: [:one | one is: #SystemWindow] ifNone: [].
-	mainWindow isNil ifTrue: [^ self removeStack].
-	self addMorphBack: mainWindow.
-	stack hasSubmorphs ifFalse: [self removeStack]! !
-
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/17/2015 03:35'!
-pushWindow
-	"Make room available for a new main window. Push the current main window to the stack."
-	mainWindow isNil ifTrue: [^ self].
-	stack isNil
-		ifTrue:
-			[stack _ direction == #vertical
-				ifTrue: [WindowStackMorph newRow layoutSpec: (LayoutSpec proportionalWidth: 1 proportionalHeight: 1); yourself]
-				ifFalse: [WindowStackMorph newColumn layoutSpec: (LayoutSpec proportionalWidth: 0.8 proportionalHeight: 1); yourself].
-			stack color: self color.
-			self addMorphFront: stack].
-	stack addMorphBack: mainWindow! !
-
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 5/22/2020 09:13:49'!
-refresh
-	mainWindow isNil ifTrue: [self popWindow].
-	stack isNil ifFalse: [stack hasSubmorphs not ifTrue: [self removeStack]].
-	stack isNil ifFalse: [stack layoutSubmorphs].
-	self layoutSubmorphs! !
-
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 04:38'!
-removeStack
-	stack isNil ifTrue: [^ self].
-	stack delete.
-	stack _ nil! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:58'!
 acceptButton
@@ -453,9 +446,9 @@ textHighlight
 unfocusedTextHighlightFrom: aColor
 	^aColor adjustSaturation: 0.0 brightness: -0.15! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:58'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 3/26/2021 18:09:44'!
 windowLabel
-	^ Color white! !
+	^ `Color gray: 0.2`! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:15'!
 browser
@@ -543,10 +536,6 @@ roundButtons
 roundWindowCorners
 	^ false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 3/24/2021 15:21:16'!
-scrollbarThickness
-	^ 12! !
-
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:10'!
 useTaskbar
 	^false! !
@@ -555,45 +544,23 @@ useTaskbar
 useUniformColors
 	^false! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 3/24/2021 12:41:54'!
-iconicHaloSpecifications
-
-^ #(
-	"selector						horiz			vert			color info						icon key 						balloon help
-	 ---------						------			-----------			--------------------------						--------------------------						---------------"
-	(addCollapseHandle:						left			topCenter			(tan)						haloCollapseIcon 						'Collapse')
-	(addDebugHandle:						right			topCenter			(orange)						haloDebugIcon 						'Debug')
-	(addDismissHandle:						left			top			(red)						haloDismissIcon 						'Remove')
-	(addRotateHandle:						left			bottom			(blue)						haloRotateIcon 						'Rotate')
-	(addMenuHandle:						leftCenter			top			(blue lighter)						haloMenuIcon 						'Menu')
-	(addGrabHandle:						center			top			(black)						haloGrabIcon 						'Pick up')
-	(addDragHandle:						rightCenter			top			(brown)						haloDragIcon 						'Move')
-	(addDupHandle:						right			top			(green)						haloDuplicateIcon 						'Duplicate')	
-	(addHelpHandle:						center			bottom			(lightBlue)						haloHelpIcon 						'Help')
-	(addResizeHandle:						right			bottom			(yellow)						haloResizeIcon 						'Change size')
-	(addScaleHandle:						right			bottom			(blue)						haloScaleIcon 						'Change scale')
-	(addFontSizeHandle:						leftCenter			bottom			(lightGreen)						haloFontSizeIcon 						'Change font')
-	(addFontEmphHandle:						rightCenter			bottom			(lightBrown darker)						haloFontEmphasisIcon 						'Emphasis & alignment')
-	"FIXME - Currently non-functional...
-	(addRecolorHandle:						right			bottomCenter			(magenta darker)						haloColorIcon 						'Change color')
-	"
-)! !
-
-!DWMTheme methodsFor: 'initialization' stamp: 'len 3/24/2021 13:23:45'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 1/28/2022 15:49:55'!
 initialize
 	super initialize.
 "
+	Feature require: 'VectorGraphics'.
+	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [self error: 'no plugin'].
+	MorphicCanvas activeSubclass: HybridCanvas.
 	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
-	
-	family _ 'DejaVu Sans'.
-	codeFamily _ 'DejaVu Sans'.
-	Preferences setDefaultFonts: {
-		{#setSystemFontTo:. family. 10}.
-		{#setListFontTo:. family. 10}.
-		{#setMenuFontTo:. family. 9}.
-		{#setWindowTitleFontTo:. family. 10}.
-		{#setCodeFontTo:. codeFamily. 10}.
-		{#setButtonFontTo:. family. 9}}.
+	Preferences
+		setDefaultFont: 'DejaVu Sans'
+		spec: #(
+			(setListFontTo: 14)
+			(setMenuFontTo: 14)
+			(setWindowTitleFontTo: 12)
+			(setCodeFontTo: 14)
+			(setButtonFontTo: 14)
+			(setSystemFontTo: 14)).
 	DisplayScreen runningWorld ifNotNil: [ :world | world fontPreferenceChanged ].
 "
 	Preferences disable: #biggerCursors.
@@ -608,8 +575,6 @@ initialize
 
 	SHTextStylerST80 initialize.
 
-	Preferences installHaloSpecsFromArray: self iconicHaloSpecifications.
-	
 	Smalltalk garbageCollect.
 	WindowManagerMorph new openInWorld startStepping! !
 
@@ -684,6 +649,10 @@ generateShoutConfig
 	}.
 
 	^ styles! !
+
+!DWMTheme methodsFor: 'icons' stamp: 'len 3/27/2021 06:02:22'!
+closeIcon
+	^ self cancelIcon! !
 
 !WindowManagerPage methodsFor: 'actions' stamp: 'len 5/5/2018 19:08:29'!
 flash
@@ -761,17 +730,28 @@ updateBounds: windowsArea
 	windows do: [:each| (each hasProperty: #originalBounds) ifTrue: [each morphPosition: windowsArea topLeft extent: windowsArea extent]]
 ! !
 
-!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 11/19/2015 07:44'!
+!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'jmv 8/18/2021 19:52:01'!
 quit
-	^ self snapshot: false andQuit: true clearAllClassState: false! !
+	"Just quit. No questions asked. No validations done.
+	Smalltalk quit.
+	"
+	self snapshot: false andQuit: true embedded: false clearAllClassState: false! !
 
-!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 11/19/2015 07:42'!
+!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 1/28/2022 08:37:54'!
 save
-	^ self snapshot: true andQuit: false clearAllClassState: false! !
+	^ self snapshot: true andQuit: false embedded: false clearAllClassState: false! !
 
-!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'len 11/19/2015 07:42'!
+!SystemDictionary methodsFor: '*Morphic-DWM' stamp: 'jmv 8/18/2021 21:03:40'!
 saveAndQuit
-	^ self snapshot: true andQuit: true clearAllClassState: false! !
+	"Save image and quit. No questions asked.
+	Smalltalk saveAndQuit.
+	"
+	ChangeSet zapAllChangeSets.
+	^ self
+		snapshot: true
+		andQuit: true
+		embedded: false
+		clearAllClassState: false.! !
 
 !RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'len 5/30/2020 16:27:52'!
 screenTopSetback
