@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5053] on 28 January 2022 at 4:14:21 pm'!
+'From Cuis 6.0 [latest update: #5434] on 5 August 2022 at 8:35:04 am'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 59!
+!provides: 'Morphic-DWM' 1 60!
 SystemOrganization addCategory: 'Morphic-DWM'!
 
 
@@ -54,12 +54,6 @@ Object subclass: #WindowManagerPage
 WindowManagerPage class
 	instanceVariableNames: ''!
 
-
-!WindowManagerPage methodsFor: 'printing' stamp: 'len 11/16/2015 15:36'!
-printOn: aStream
-	aStream nextPut: $[.
-	windows do: [:each | aStream print: each] separatedBy: [aStream nextPutAll: '; '].
-	aStream nextPut: $]! !
 
 !WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:14'!
 privateAddMorph: aMorph atIndex: anInteger
@@ -506,11 +500,11 @@ versionsBrowser
 workspace
 	^ Color lightYellow duller! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/19/2020 04:12:25'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 8/5/2022 08:26:40'!
 buttonPaneHeight
 	"Answer the user's preferred default height for button panes."
 
-	^Preferences standardButtonFont lineSpacing * 10 // 8! !
+	^(Preferences at: #standardButtonFont) lineSpacing * 10 // 8! !
 
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
 embossedTitles
@@ -544,34 +538,35 @@ useTaskbar
 useUniformColors
 	^false! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 1/28/2022 15:49:55'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 8/5/2022 08:31:08'!
 initialize
 	super initialize.
 "
 	Feature require: 'VectorGraphics'.
 	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [self error: 'no plugin'].
 	MorphicCanvas activeSubclass: HybridCanvas.
+	TextModel useUtf8Editors.
 	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
-	Preferences
+	PreferenceSet
 		setDefaultFont: 'DejaVu Sans'
 		spec: #(
-			(setListFontTo: 14)
-			(setMenuFontTo: 14)
-			(setWindowTitleFontTo: 12)
-			(setCodeFontTo: 14)
-			(setButtonFontTo: 14)
-			(setSystemFontTo: 14)).
+			(standardListFont 14)
+			(standardMenuFont 14)
+			(windowTitleFont 12)
+			(standardCodeFont 14)
+			(standardButtonFont 14)).
 	DisplayScreen runningWorld ifNotNil: [ :world | world fontPreferenceChanged ].
 "
-	Preferences disable: #biggerCursors.
-	Preferences enable: #dismissAllOnOptionClose.
-	Preferences enable: #subPixelRenderColorFonts.
-	Preferences enable: #italicsInShout.
-	Preferences enable: #shoutInWorkspaces.
-	Preferences disable: #optionalButtons.
-	Preferences enable: #showAnnotations.
-	Preferences disable: #usePreDebugWindow.
-	Preferences useAlwaysLeftArrow.
+	Preferences
+		at: #biggerCursors put: false;
+		at: #dismissAllOnOptionClose put: true;
+		at: #subPixelRenderColorFonts put: true;
+		at: #italicsInShout put: true;
+		at: #shoutInWorkspaces put: true;
+		at: #optionalButtons put: false;
+		at: #showAnnotations put: true;
+		at: #usePreDebugWindow put: false.
+"	Preferences useAlwaysLeftArrow."
 
 	SHTextStylerST80 initialize.
 
@@ -653,6 +648,12 @@ generateShoutConfig
 !DWMTheme methodsFor: 'icons' stamp: 'len 3/27/2021 06:02:22'!
 closeIcon
 	^ self cancelIcon! !
+
+!WindowManagerPage methodsFor: 'printing' stamp: 'len 11/16/2015 15:36'!
+printOn: aStream
+	aStream nextPut: $[.
+	windows do: [:each | aStream print: each] separatedBy: [aStream nextPutAll: '; '].
+	aStream nextPut: $]! !
 
 !WindowManagerPage methodsFor: 'actions' stamp: 'len 5/5/2018 19:08:29'!
 flash
