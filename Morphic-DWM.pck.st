@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5438] on 6 August 2022 at 8:22:56 am'!
+'From Cuis 6.0 [latest update: #5438] on 7 August 2022 at 12:38:02 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 64!
+!provides: 'Morphic-DWM' 1 65!
 SystemOrganization addCategory: 'Morphic-DWM'!
 
 
@@ -444,6 +444,92 @@ unfocusedTextHighlightFrom: aColor
 windowLabel
 	^ `Color gray: 0.2`! !
 
+!DWMTheme methodsFor: 'icons' stamp: 'len 3/27/2021 06:02:22'!
+closeIcon
+	^ self cancelIcon! !
+
+!DWMTheme methodsFor: 'initialization' stamp: 'len 8/6/2022 08:22:48'!
+initialize
+	super initialize.
+"
+	Feature require: 'VectorGraphics'.
+	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [self error: 'no plugin'].
+	MorphicCanvas activeSubclass: HybridCanvas.
+	TextModel useUtf8Editors.
+	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
+	PreferenceSet
+		setDefaultFont: 'DejaVu Sans'
+		spec: #(
+			(standardListFont 14)
+			(standardMenuFont 14)
+			(windowTitleFont 12)
+			(standardCodeFont 14)
+			(standardButtonFont 14)).
+	DisplayScreen runningWorld ifNotNil: [ :world | world fontPreferenceChanged ].
+"
+	Preferences
+		at: #biggerCursors put: false;
+		at: #dismissAllOnOptionClose put: true;
+		at: #subPixelRenderColorFonts put: true;
+		at: #italicsInShout put: true;
+		at: #shoutInWorkspaces put: true;
+		at: #optionalButtons put: false;
+		at: #showAnnotations put: true;
+		at: #usePreDebugWindow put: false.
+"	Preferences useAlwaysLeftArrow."
+
+	SHTextStylerST80 initialize.
+
+	Smalltalk garbageCollect.
+	UISupervisor ui borderWidth: 0.
+	WindowManagerMorph new openInWorld startStepping! !
+
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
+menu
+	^ Color darkGray darker darker! !
+
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
+menuText
+	^ Color white! !
+
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:59'!
+menuTitleBar
+	^ self menu darker! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 8/5/2022 08:26:40'!
+buttonPaneHeight
+	"Answer the user's preferred default height for button panes."
+
+	^(Preferences at: #standardButtonFont) lineSpacing * 10 // 8! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
+embossedTitles
+	^false! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 01:23'!
+fullScreenDeskMargin
+	^ 0! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 3/24/2021 15:19:57'!
+layoutAdjusterThickness
+	^ 2! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:15'!
+roundButtons
+	^ false! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 8/6/2022 08:16:38'!
+roundWindowCorners
+	^ false! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:10'!
+useTaskbar
+	^false! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 11/17/2015 22:36'!
+useUniformColors
+	^false! !
+
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:15'!
 browser
 	^ Color lightGreen duller! !
@@ -499,92 +585,6 @@ versionsBrowser
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:42:16'!
 workspace
 	^ Color lightYellow duller! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 8/5/2022 08:26:40'!
-buttonPaneHeight
-	"Answer the user's preferred default height for button panes."
-
-	^(Preferences at: #standardButtonFont) lineSpacing * 10 // 8! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
-embossedTitles
-	^false! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 01:23'!
-fullScreenDeskMargin
-	^ 0! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 3/24/2021 15:19:57'!
-layoutAdjusterThickness
-	^ 2! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:25'!
-minimalWindows
-	^true! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:15'!
-roundButtons
-	^ false! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 8/6/2022 08:16:38'!
-roundWindowCorners
-	^ false! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:10'!
-useTaskbar
-	^false! !
-
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/17/2015 22:36'!
-useUniformColors
-	^false! !
-
-!DWMTheme methodsFor: 'initialization' stamp: 'len 8/6/2022 08:22:48'!
-initialize
-	super initialize.
-"
-	Feature require: 'VectorGraphics'.
-	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [self error: 'no plugin'].
-	MorphicCanvas activeSubclass: HybridCanvas.
-	TextModel useUtf8Editors.
-	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
-	PreferenceSet
-		setDefaultFont: 'DejaVu Sans'
-		spec: #(
-			(standardListFont 14)
-			(standardMenuFont 14)
-			(windowTitleFont 12)
-			(standardCodeFont 14)
-			(standardButtonFont 14)).
-	DisplayScreen runningWorld ifNotNil: [ :world | world fontPreferenceChanged ].
-"
-	Preferences
-		at: #biggerCursors put: false;
-		at: #dismissAllOnOptionClose put: true;
-		at: #subPixelRenderColorFonts put: true;
-		at: #italicsInShout put: true;
-		at: #shoutInWorkspaces put: true;
-		at: #optionalButtons put: false;
-		at: #showAnnotations put: true;
-		at: #usePreDebugWindow put: false.
-"	Preferences useAlwaysLeftArrow."
-
-	SHTextStylerST80 initialize.
-
-	Smalltalk garbageCollect.
-	UISupervisor ui borderWidth: 0.
-	WindowManagerMorph new openInWorld startStepping! !
-
-!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
-menu
-	^ Color darkGray darker darker! !
-
-!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
-menuText
-	^ Color white! !
-
-!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:59'!
-menuTitleBar
-	^ self menu darker! !
 
 !DWMTheme methodsFor: 'widget colors' stamp: 'len 11/13/2015 19:11'!
 textPane
@@ -646,16 +646,6 @@ generateShoutConfig
 
 	^ styles! !
 
-!DWMTheme methodsFor: 'icons' stamp: 'len 3/27/2021 06:02:22'!
-closeIcon
-	^ self cancelIcon! !
-
-!WindowManagerPage methodsFor: 'printing' stamp: 'len 11/16/2015 15:36'!
-printOn: aStream
-	aStream nextPut: $[.
-	windows do: [:each | aStream print: each] separatedBy: [aStream nextPutAll: '; '].
-	aStream nextPut: $]! !
-
 !WindowManagerPage methodsFor: 'actions' stamp: 'len 5/5/2018 19:08:29'!
 flash
 	tilingMorph ifNotNil: [:aMorph| aMorph world ifNotNil: [:aWorld| aWorld flash. ^ self]].
@@ -710,6 +700,12 @@ delete
 !WindowManagerPage methodsFor: 'initialization' stamp: 'len 11/16/2015 15:00'!
 initialize
 	windows _ OrderedCollection new! !
+
+!WindowManagerPage methodsFor: 'printing' stamp: 'len 11/16/2015 15:36'!
+printOn: aStream
+	aStream nextPut: $[.
+	windows do: [:each | aStream print: each] separatedBy: [aStream nextPutAll: '; '].
+	aStream nextPut: $]! !
 
 !WindowManagerPage methodsFor: 'testing' stamp: 'len 5/3/2018 21:06:42'!
 isEmpty
