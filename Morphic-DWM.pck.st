@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5434] on 5 August 2022 at 8:35:04 am'!
+'From Cuis 6.0 [latest update: #5438] on 6 August 2022 at 8:22:56 am'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 60!
+!provides: 'Morphic-DWM' 1 64!
 SystemOrganization addCategory: 'Morphic-DWM'!
 
 
@@ -526,7 +526,7 @@ minimalWindows
 roundButtons
 	^ false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:15'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 8/6/2022 08:16:38'!
 roundWindowCorners
 	^ false! !
 
@@ -538,7 +538,7 @@ useTaskbar
 useUniformColors
 	^false! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 8/5/2022 08:31:08'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 8/6/2022 08:22:48'!
 initialize
 	super initialize.
 "
@@ -571,6 +571,7 @@ initialize
 	SHTextStylerST80 initialize.
 
 	Smalltalk garbageCollect.
+	UISupervisor ui borderWidth: 0.
 	WindowManagerMorph new openInWorld startStepping! !
 
 !DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
