@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5438] on 7 August 2022 at 12:38:02 pm'!
+'From Cuis 6.0 [latest update: #5597] on 18 December 2022 at 9:57:48 am'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 65!
+!provides: 'Morphic-DWM' 1 66!
 SystemOrganization addCategory: 'Morphic-DWM'!
 
 
@@ -448,14 +448,10 @@ windowLabel
 closeIcon
 	^ self cancelIcon! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 8/6/2022 08:22:48'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 12/18/2022 09:56:07'!
 initialize
 	super initialize.
 "
-	Feature require: 'VectorGraphics'.
-	(Smalltalk at: #VectorEngineWithPlugin) isPluginAvailable ifFalse: [self error: 'no plugin'].
-	MorphicCanvas activeSubclass: HybridCanvas.
-	TextModel useUtf8Editors.
 	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
 	PreferenceSet
 		setDefaultFont: 'DejaVu Sans'
@@ -476,7 +472,6 @@ initialize
 		at: #optionalButtons put: false;
 		at: #showAnnotations put: true;
 		at: #usePreDebugWindow put: false.
-"	Preferences useAlwaysLeftArrow."
 
 	SHTextStylerST80 initialize.
 
@@ -590,7 +585,7 @@ workspace
 textPane
 	^ Color black! !
 
-!DWMTheme methodsFor: 'private - shout mappings' stamp: 'len 5/27/2020 16:24:38'!
+!DWMTheme methodsFor: 'private - shout mappings' stamp: 'len 12/18/2022 09:57:31'!
 generateShoutConfig
 
 	| styles colors |
@@ -620,8 +615,8 @@ generateShoutConfig
 		{self symbols . colors at: #messages . #bold}.
 		{self pattern . colors at: #selector . #bold}.
 		{self ansiAssignment . nil . #bold}.
-		{self assignment . nil . #(#bold #withST80Glyphs)}.
-		{self return . nil . #(#bold #withST80Glyphs)}.
+		{self assignment . nil . #bold}.
+		{self return . nil . #bold}.
 		{self tempVars . colors at: #tempVars . self italic}.
 		{self blockTemps . colors at: #blockTemps . self italic}
 	} do: [ :style |
