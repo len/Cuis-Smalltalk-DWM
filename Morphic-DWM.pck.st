@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5597] on 18 December 2022 at 9:57:48 am'!
+'From Cuis 6.0 [latest update: #5801] on 18 May 2023 at 5:45:37 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 66!
+!provides: 'Morphic-DWM' 1 69!
 SystemOrganization addCategory: 'Morphic-DWM'!
 
 
@@ -370,9 +370,10 @@ listMultiHighlightFocused: aBoolean
 	^ (self listHighlightFocused: aBoolean) 
 		adjustSaturation: 0.0 brightness: 0.15! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 5/25/2019 05:17:17'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 12/27/2022 12:28:29'!
 paneBackgroundFrom: aColor
-	^ aColor alphaMixed: 0.11 with: Color black! !
+"	^ aColor adjustSaturation: 0 brightness: -0.7"
+	^ aColor alphaMixed: 0.14 with: Color black! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:39'!
 scrollbarButtonColor
@@ -448,19 +449,19 @@ windowLabel
 closeIcon
 	^ self cancelIcon! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 12/18/2022 09:56:07'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 5/18/2023 17:45:29'!
 initialize
 	super initialize.
 "
-	TrueTypeFontFamily read: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
+	TrueTypeFontFamily readAllTrueTypeFontsIn: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
 	PreferenceSet
 		setDefaultFont: 'DejaVu Sans'
 		spec: #(
-			(standardListFont 14)
-			(standardMenuFont 14)
-			(windowTitleFont 12)
-			(standardCodeFont 14)
-			(standardButtonFont 14)).
+			(standardListFont 15)
+			(standardMenuFont 15)
+			(windowTitleFont 13)
+			(standardCodeFont 15)
+			(standardButtonFont 15)).
 	DisplayScreen runningWorld ifNotNil: [ :world | world fontPreferenceChanged ].
 "
 	Preferences
