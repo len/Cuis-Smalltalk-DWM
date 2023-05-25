@@ -1,6 +1,6 @@
-'From Cuis 6.0 [latest update: #5801] on 18 May 2023 at 5:45:37 pm'!
+'From Cuis 6.0 [latest update: #5801] on 25 May 2023 at 7:13:24 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 69!
+!provides: 'Morphic-DWM' 1 72!
 SystemOrganization addCategory: 'Morphic-DWM'!
 
 
@@ -199,7 +199,7 @@ drawOn: aCanvas
 			font: font
 			color: Color black]"! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 13:09:35'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/25/2023 09:48:29'!
 keyStroke: aKeyboardEvent morph: aMorph
 	"Handle global shortcuts. Return true if the event was handled, false otherwise."
 	| i |
@@ -216,7 +216,7 @@ keyStroke: aKeyboardEvent morph: aMorph
 
 	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
 		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
-	(i _ #(33 64 35 36 37 94 38 42) indexOf: aKeyboardEvent keyValue) > 0
+	(i := #(33 64 35 36 37 94 38 42) indexOf: aKeyboardEvent keyValue) > 0
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| self moveWindow: w toPage: i; switchToPage: i. ^true]].
 
 	"Shortcuts to open new windows:"
@@ -232,7 +232,7 @@ keyStroke: aKeyboardEvent morph: aMorph
 		ifTrue: [FileListWindow openFileList. ^true].
 	aKeyboardEvent keyCharacter = $C
 		ifTrue: [ChangeSorterWindow open: ChangeSorter new label: nil. ^true].
-	aKeyboardEvent keyCharacter = $R
+	aKeyboardEvent keyCharacter = $S
 		ifTrue: [TestRunnerWindow openTestRunner. ^true].
 	aKeyboardEvent keyCharacter = $M
 		ifTrue: [MessageNamesWindow open: MessageNames new label: 'Message Names'. ^true].
@@ -341,9 +341,9 @@ acceptButton
 background
 	^ Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 04:53'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 5/25/2023 19:12:09'!
 buttonColorFrom: paneColor
-	^ paneColor! !
+	^ paneColor adjustSaturation: -0.03 brightness: -0.1! !
 
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:45'!
 buttonLabel
@@ -492,15 +492,23 @@ menuText
 menuTitleBar
 	^ self menu darker! !
 
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 23:33:07'!
+buttonBorderWidth
+	^ 1! !
+
 !DWMTheme methodsFor: 'other options' stamp: 'len 8/5/2022 08:26:40'!
 buttonPaneHeight
 	"Answer the user's preferred default height for button panes."
 
 	^(Preferences at: #standardButtonFont) lineSpacing * 10 // 8! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/13/2015 18:23'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:18:00'!
+embossedButtonLabels
+	^ false! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:27:46'!
 embossedTitles
-	^false! !
+	^ false! !
 
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 01:23'!
 fullScreenDeskMargin
@@ -510,13 +518,29 @@ fullScreenDeskMargin
 layoutAdjusterThickness
 	^ 2! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:15'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 23:23:46'!
 roundButtons
+	^ true! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:26:06'!
+roundWindowCorners
+	^ true! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 23:51:17'!
+roundedButtonRadius
+	^ 4! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:26:43'!
+roundedWindowRadius
+	^6! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:19:14'!
+scrollbarShowButtons
 	^ false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 8/6/2022 08:16:38'!
-roundWindowCorners
-	^ false! !
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 23:49:27'!
+scrollbarThickness
+	^ 16! !
 
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:10'!
 useTaskbar
@@ -525,6 +549,10 @@ useTaskbar
 !DWMTheme methodsFor: 'other options' stamp: 'len 11/17/2015 22:36'!
 useUniformColors
 	^false! !
+
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:09:29'!
+windowBorderWidth
+	^ 6! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:15'!
 browser
@@ -751,8 +779,9 @@ saveAndQuit
 screenTopSetback
 	^ 16! !
 
-!Morph methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 05:54:44'!
+!Morph methodsFor: '*morphic-dwm' stamp: 'jmv 12/21/2018 09:21:39'!
 focusKeyboardFor: aKeyboardEvent
+
 	"If aKeyboardEvent ctrl-tab or shift-ctrl-tab use it to navigate keyboard focus.
 	Warning: This doesn't work on Windows... the event is not sent"
 	(aKeyboardEvent keyValue = 9 and: [ aKeyboardEvent controlKeyPressed and: [ aKeyboardEvent rawMacOptionKeyPressed not ]])
