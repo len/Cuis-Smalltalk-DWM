@@ -1,56 +1,56 @@
-'From Cuis 6.0 [latest update: #5801] on 25 May 2023 at 7:13:24 pm'!
+'From Cuis 6.0 [latest update: #5898] on 5 July 2023 at 10:34:01 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 72!
-SystemOrganization addCategory: 'Morphic-DWM'!
+!provides: 'Morphic-DWM' 1 80!
+SystemOrganization addCategory: #'Morphic-DWM'!
 
 
-!classDefinition: #WindowStackMorph category: 'Morphic-DWM'!
+!classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowStackMorph class' category: 'Morphic-DWM'!
+!classDefinition: 'WindowStackMorph class' category: #'Morphic-DWM'!
 WindowStackMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #WindowTilingMorph category: 'Morphic-DWM'!
+!classDefinition: #WindowTilingMorph category: #'Morphic-DWM'!
 LayoutMorph subclass: #WindowTilingMorph
 	instanceVariableNames: 'mainWindow stack'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowTilingMorph class' category: 'Morphic-DWM'!
+!classDefinition: 'WindowTilingMorph class' category: #'Morphic-DWM'!
 WindowTilingMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #WindowManagerMorph category: 'Morphic-DWM'!
+!classDefinition: #WindowManagerMorph category: #'Morphic-DWM'!
 BoxedMorph subclass: #WindowManagerMorph
-	instanceVariableNames: 'pages currentPage ownerExtent'
+	instanceVariableNames: 'pages currentPage ownerExtent highlightedPage'
 	classVariableNames: 'Current'
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowManagerMorph class' category: 'Morphic-DWM'!
+!classDefinition: 'WindowManagerMorph class' category: #'Morphic-DWM'!
 WindowManagerMorph class
 	instanceVariableNames: ''!
 
-!classDefinition: #DWMTheme category: 'Morphic-DWM'!
+!classDefinition: #DWMTheme category: #'Morphic-DWM'!
 Theme subclass: #DWMTheme
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'DWMTheme class' category: 'Morphic-DWM'!
+!classDefinition: 'DWMTheme class' category: #'Morphic-DWM'!
 DWMTheme class
 	instanceVariableNames: ''!
 
-!classDefinition: #WindowManagerPage category: 'Morphic-DWM'!
+!classDefinition: #WindowManagerPage category: #'Morphic-DWM'!
 Object subclass: #WindowManagerPage
 	instanceVariableNames: 'tilingMorph windows'
 	classVariableNames: ''
 	poolDictionaries: ''
 	category: 'Morphic-DWM'!
-!classDefinition: 'WindowManagerPage class' category: 'Morphic-DWM'!
+!classDefinition: 'WindowManagerPage class' category: #'Morphic-DWM'!
 WindowManagerPage class
 	instanceVariableNames: ''!
 
@@ -176,22 +176,28 @@ switchToPage: anInteger
 	self step.
 	self redrawNeeded! !
 
-!WindowManagerMorph methodsFor: 'drawing' stamp: 'len 5/22/2020 15:49:34'!
+!WindowManagerMorph methodsFor: 'actions' stamp: 'len 6/6/2023 08:15:22'!
+windowToggleTiling: aSystemWIndow
+	currentPage windowToggleTiling: aSystemWIndow windowsArea: self windowsArea! !
+
+!WindowManagerMorph methodsFor: 'drawing' stamp: 'len 6/6/2023 12:57:37'!
 drawOn: aCanvas
 	| font w rect |
 	aCanvas fillRectangle: self morphLocalBounds color: color.
-	font _ self font.
-	w _ font lineSpacing.
-	rect _ 0@0 extent: w@w.
+	font := self font.
+	w := font lineSpacing.
+	rect := 0@0 extent: w@w.
 	pages withIndexDo: [:page :i|
 		page == currentPage
 			ifTrue: [aCanvas fillRectangle: (rect insetBy: 1) color: Color black].
+		i = highlightedPage
+			ifTrue: [aCanvas frameRectangle: (rect insetBy: 1) borderWidth: 1 color: Color white].
 		aCanvas
 			drawString: i printString
-			at: rect topLeft + (2@1)
+			at: rect topLeft + (4@1)
 			font: font
 			color: (page == currentPage ifTrue: [Color white] ifFalse: [page isEmpty ifTrue: [Color black] ifFalse: [Color gray]]).
-		rect _ rect translatedBy: w@0].
+		rect := rect translatedBy: w@0].
 "	activeWindowLabel ifNotNil:
 		[:aString|
 		aCanvas drawString: activeWindowLabel asString
@@ -199,20 +205,34 @@ drawOn: aCanvas
 			font: font
 			color: Color black]"! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/25/2023 09:48:29'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 08:33:14'!
+handlesMouseDown: evt
+	^ true! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 12:46:57'!
+handlesMouseHover
+	^ true! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 12:38:16'!
+handlesMouseOver: evt
+	^ true! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 20:00:50'!
 keyStroke: aKeyboardEvent morph: aMorph
 	"Handle global shortcuts. Return true if the event was handled, false otherwise."
-	| i |
 	"Global shortcuts should use command (Mac) / alt (PC) key.
-	Control key is reserved for normal shortcuts (local shortcuts, defined by a morph)."
-	(aKeyboardEvent controlKeyPressed or: [aKeyboardEvent commandAltKeyPressed not]) ifTrue: [^false].
+	Control key is reserved for normal shortcuts (local shortcuts, defined by a morph), except ctrl-esc for the world menu."
 
+	| i |
+	aKeyboardEvent controlKeyPressed ifTrue:
+		[aKeyboardEvent isEsc ifTrue: [self world invokeWorldMenu. ^true]. ^false].
+	aKeyboardEvent commandAltKeyPressed ifFalse: [^false].
 	aKeyboardEvent isEsc
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| w fullScreen. ^true]].
 	aKeyboardEvent keyCharacter = $w
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| w delete. ^true]].
 	aKeyboardEvent keyCharacter = $t
-		ifTrue: [aMorph owningWindow ifNotNil: [:w| currentPage windowToggleTiling: w windowsArea: self windowsArea. ^true]].
+		ifTrue: [aMorph owningWindow ifNotNil: [:w| self windowToggleTiling: w. ^true]].
 
 	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
 		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
@@ -237,6 +257,24 @@ keyStroke: aKeyboardEvent morph: aMorph
 	aKeyboardEvent keyCharacter = $M
 		ifTrue: [MessageNamesWindow open: MessageNames new label: 'Message Names'. ^true].
 	^ false! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 08:32:04'!
+mouseButton1Up: aMouseButtonEvent localPosition: localEventPosition
+	| pageNumber |
+	pageNumber := (localEventPosition x // self font lineSpacing) rounded + 1.
+	(pageNumber between: 1 and: 8) ifTrue: [self switchToPage: pageNumber]! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 12:57:16'!
+mouseHover: aMouseMoveEvent localPosition: localEventPosition
+	| i |
+	((i := (localEventPosition x // self defaultHeight + 1) rounded) between: 1 and: 8) ifTrue:
+		[highlightedPage := i.
+		self redrawNeeded].! !
+
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 12:54:23'!
+mouseLeave: evt
+	highlightedPage := nil.
+	self redrawNeeded! !
 
 !WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 08:43:45'!
 windowClosed: aSystemWindow
@@ -304,22 +342,22 @@ addWindow: aSystemWindow
 defaultHeight
 	^ self font lineSpacing! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 12:52:26'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 6/6/2023 08:39:35'!
 defaultWidth
-	^ self font lineSpacing * 8 + 2! !
+	^ self defaultHeight * 8 + 2! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 3/24/2021 14:01:30'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 6/6/2023 12:57:48'!
 font
-	^ (FontFamily familyNamed: FontFamily defaultFamilyName) atPointSize: 12! !
+	^ (FontFamily familyNamed: FontFamily defaultFamilyName) atPointSize: 16! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/25/2020 08:09:00'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 6/6/2023 08:40:39'!
 updateBounds
 	| world newPosition area |
-	world _ self world ifNil: [^ self].
-	newPosition _ world morphWidth - self defaultWidth @ (world morphHeight - self defaultHeight).
+	world := self world ifNil: [^ self].
+	newPosition := world morphWidth - self defaultWidth @ (world morphHeight - self defaultHeight).
 	self morphPosition rounded = newPosition rounded ifTrue: [^ self].
 	self morphPosition: newPosition extent: self defaultWidth @ self defaultHeight.
-	area _ self windowsArea.
+	area := self windowsArea.
 	pages do: [:each| each updateBounds: area]! !
 
 !WindowManagerMorph methodsFor: 'private' stamp: 'len 5/25/2020 08:07:35'!
@@ -387,23 +425,53 @@ scrollbarColor
 scrollbarSliderShadowColor
 	^Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 5/27/2020 16:42:18'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/14/2023 13:06:53'!
 shout
+	"
+	SHTextStylerST80 releaseClassCachedState
+	"
+	| green yellow pink blue lilac |
+	"fav:"
+	yellow := '#F6FA70'.
+	blue := '#80DAFF'.
+"	blue := '#62CDFF'."
+	green := '#B4FF9F'.
+	pink := '#FF8AAE'.
+"	orange := '#FFCBA3'."
+	lilac := '#ACBCFF'.
+	"classic:"
+"	yellow := '#FFFE82'.
+	blue := '#9ED6FF'.
+	green := '#ADFFD3'.
+	purple := '#FF709C'."
+	"fluo:"
+"	green := '#A3F307'.
+	yellow := '#e2f9e2'.
+	purple := '#f50b86'.
+	blue := '#05f9e2'."
+	"neon:"
+"	yellow := '#F6FA70'.
+	blue := '#0079FF'.
+	green := '#00DFA2'.
+	purple := '#FF0060'."
+
 	^ {
 		#selector  				-> nil.
 		#defaults 				-> #white.
 		#undefined 				-> #white. "#(lightRed lighter lighter lighter lighter)."
 		#comment 				-> #(lightGray lighter).
-		#literals 				-> #(lightBlue lighter).
-		#pseudoVariables 		-> '#FF709C'. "and bold"
+		#literals 				-> blue.
+		#pseudoVariables 		-> pink. "and bold"
 		#messages 				-> #(white).
 		#incompleteMessages	-> #(white).
-		#arguments 				-> #(lightYellow lighter).
-		#instVar 				-> #(lightGreen).
+		#arguments 				-> yellow.
+		#instVar 				-> lilac.
 		#tempBar 				-> #(white darker).
-		#tempVars				-> '#F0FFC4'.
+"		#tempVars				-> '#F0FFC4'."
+"		#tempVars				-> '#ADFFD3'."
+		#tempVars				-> green.
 "		#blockTemps				-> '#5CFFA7'."
-		#blockTemps				-> '#ADFFD3'.
+		#blockTemps				-> green.
 "		#block 					-> #(white)."
 		#blockLevelZero		-> #(white).
 		#blockLevelOne 		-> #(red muchLighter).
@@ -429,6 +497,13 @@ successColor
 text
 	^ Color white! !
 
+!DWMTheme methodsFor: 'colors' stamp: 'len 6/14/2023 13:37:17'!
+textAutoHighlight
+	self flag: #fixme. "this needs to change SHTextStylerST80>>#privateConvert to call it."
+	^ (Color colorFrom: '#FF005C') alpha: 0.5
+"	^ (Color colorFrom: '#ff2f8e') alpha: 0.5"
+"	^ (Color colorFrom: '#F0FF42') alpha: 0.3"! !
+
 !DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:10'!
 textCursor
 	^ Color white! !
@@ -449,10 +524,16 @@ windowLabel
 closeIcon
 	^ self cancelIcon! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 5/18/2023 17:45:29'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 7/5/2023 19:57:39'!
 initialize
 	super initialize.
 "
+	TTFontReader smalltalkAssignmentArrowGlyphCodePoint: 16r21E6.
+	TTFontReader smalltalkReturnArrowGlyphCodePoint: 16r21E7.
+
+	TTFontReader smalltalkAssignmentArrowGlyphCodePoint: 16r2B05.
+	TTFontReader smalltalkReturnArrowGlyphCodePoint: 16r2B06.
+	
 	TrueTypeFontFamily readAllTrueTypeFontsIn: DirectoryEntry smalltalkImageDirectory / 'TrueTypeFonts' / 'DejaVu' / 'DejaVuSans'.
 	PreferenceSet
 		setDefaultFont: 'DejaVu Sans'
@@ -775,6 +856,23 @@ saveAndQuit
 		embedded: false
 		clearAllClassState: false.! !
 
+!SmalltalkEditor methodsFor: '*morphic-dwm' stamp: 'len 6/21/2023 13:34:16'!
+printIt
+	"Treat the current text selection as an expression; evaluate it. Insert the 
+	description of the result of evaluation after the selection and then make 
+	this description the new text selection."
+	self
+		evaluateSelectionAndDo: [ :result |
+			| text |
+			text := model fullPrintIt
+				ifTrue: [result printText]
+				ifFalse: [result printTextLimitedTo: 10000].
+			text := text copyReplaceAll: String lfString with: String lfString, ' '.
+			text := ' ', text asText shoutDisableEmphasis, '.'.
+			self afterSelectionInsertAndSelect: (text initialFontFrom: emphasisHere)]
+		ifFail: [ morph flash ]
+		profiled: false! !
+
 !RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'len 5/30/2020 16:27:52'!
 screenTopSetback
 	^ 16! !
@@ -824,6 +922,73 @@ focusKeyboardFor: aKeyboardEvent
 		^true ].
 	^false! !
 
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:23:07'!
+addWindowControlTo: aMenu
+
+	aMenu
+		add: 'send to back' 				action: #sendToBack 				icon: #goBottomIcon;
+		add: 'make next-to-topmost' 	action: #makeSecondTopmost 	icon: #goUpIcon;
+		addLine;
+		add: (self isSticky ifTrue: [ 'make draggable' ] ifFalse: [ 'make undraggable' ])
+											action: #toggleStickiness 			icon: (self isSticky ifFalse: [#pushPinIcon]);
+		addLine;
+		add: 'close (w)' 						action: #delete 						icon: #closeIcon;
+		add: 'tille / untile (t)' 					action: #toggleTiling 					icon: #collapseIcon;
+		add: 'expand / contract (esc)' 		action: #expandBoxHit 				icon: #expandIcon;
+		addLine;
+		add: 'resize...' 					action: #resize.
+		
+	^aMenu! !
+
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:10:30'!
+buildWindowMenu
+
+	| aMenu |
+
+	aMenu := MenuMorph new defaultTarget: self.
+
+	aMenu 
+		add: 'change title...' 			action: #relabel 						icon: #saveAsIcon;
+		add: 'window color...' 			action: #setWindowColor 			icon: #graphicsIcon.
+	
+	self hasSaveAs
+		ifTrue: [ aMenu add: 'Save as ...' action: #saveContents icon: #saveAsIcon ].
+		
+	aMenu
+		addLine.
+		
+	self addWindowControlTo: aMenu.
+"	self addTileResizerMenuTo: aMenu."
+
+	^ aMenu! !
+
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:24:07'!
+createCloseButton
+	^ (PluggableButtonMorph model: self action: #closeBoxHit)
+		iconDrawSelector: #drawCloseIcon;
+		setBalloonText: 'close this window (w)';
+		morphExtent: Theme current titleBarButtonsExtent;
+		color: Color transparent;
+		borderWidth: 0! !
+
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:25:07'!
+createExpandButton
+	^ (PluggableButtonMorph model: self action: #expandBoxHit)
+		iconDrawSelector: #drawExpandIcon;
+		setBalloonText: 'expand / contract this window (f)';
+		morphExtent: Theme current titleBarButtonsExtent;
+		color: Color transparent;
+		borderWidth: 0! !
+
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:25:17'!
+createTileButton
+	^(PluggableButtonMorph model: self action: #toggleTiling)
+		iconDrawSelector: #drawCollapseIcon;
+		setBalloonText: 'tile / untile this window (t)';
+		morphExtent: Theme current titleBarButtonsExtent;
+		color: Color transparent;
+		borderWidth: 0! !
+
 !SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 08:59:41'!
 delete
 	| thisWorld |
@@ -836,12 +1001,28 @@ delete
 	self model: nil.
 	WindowManagerMorph current ifNotNil: [:m| m windowClosed: self]! !
 
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:22:15'!
+initializeLabelArea
+	"Initialize the label area (titlebar) for the window."
+
+	| topLeft spacing |
+	topLeft := (self labelHeight + borderWidth - Theme current titleBarButtonsExtent / 2) ceiling asPoint.
+	spacing := Theme current titleBarButtonsExtent x *13//10.
+	self addMorph: self createCloseButton position: topLeft.
+	self addMorph: self createTileButton position: spacing@0 + topLeft.
+	self addMorph: self createExpandButton position: spacing*2@0 + topLeft.
+	self addMorph: self createMenuButton position: spacing*3@0 + topLeft! !
+
 !SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 09:00:26'!
 openInWorld
 	"Ensure all widgets have proper colors before opening"
 	self widgetsColor: self windowColor.
 	super openInWorld.
 	WindowManagerMorph current ifNotNil: [:m| m windowOpen: self]! !
+
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:19:17'!
+toggleTiling
+	WindowManagerMorph current ifNotNil: [:m| m windowToggleTiling: self]! !
 
 !KeyboardEvent methodsFor: '*morphic-dwm-dispatching' stamp: 'len 3/24/2021 12:49:16'!
 sendEventTo: aMorph
