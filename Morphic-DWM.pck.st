@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7004] on 25 January 2025 at 8:48:54 am'!
+'From Cuis7.3 [latest update: #7034] on 28 January 2025 at 8:59:58 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 84!
+!provides: 'Morphic-DWM' 1 85!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -947,21 +947,3 @@ toggleTiling
 !RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'len 5/30/2020 16:27:52'!
 screenTopSetback
 	^ 16! !
-
-!SmalltalkEditor methodsFor: '*morphic-dwm' stamp: 'len 6/21/2023 13:34:16'!
-printIt
-	"Treat the current text selection as an expression; evaluate it. Insert the 
-	description of the result of evaluation after the selection and then make 
-	this description the new text selection."
-	self lineSelectAndEmptyCheck: [^ self ].
-	self
-		evaluateSelectionAndDo: [ :result |
-			| text |
-			text := model fullPrintIt
-				ifTrue: [result printText]
-				ifFalse: [result printTextLimitedTo: 10000].
-			text := text copyReplaceAll: String lfString with: String lfString, ' '.
-			text := ' ', text asText shoutDisableEmphasis, '.'.
-			self afterSelectionInsertAndSelect: (text initialFontFrom: emphasisHere)]
-		ifFail: [ morph flash ]
-		profiled: false! !
