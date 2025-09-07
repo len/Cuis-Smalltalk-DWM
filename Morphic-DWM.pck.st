@@ -1,6 +1,6 @@
-'From Cuis7.3 [latest update: #7034] on 28 January 2025 at 8:59:58 pm'!
+'From Cuis7.5 [latest update: #7526] on 7 September 2025 at 7:40:32 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 85!
+!provides: 'Morphic-DWM' 1 90!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -35,7 +35,7 @@ WindowManagerMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #WindowStackMorph category: #'Morphic-DWM'!
-LayoutMorph subclass: #WindowStackMorph
+LinearLayoutMorph subclass: #WindowStackMorph
 	instanceVariableNames: ''
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -45,7 +45,7 @@ WindowStackMorph class
 	instanceVariableNames: ''!
 
 !classDefinition: #WindowTilingMorph category: #'Morphic-DWM'!
-LayoutMorph subclass: #WindowTilingMorph
+LinearLayoutMorph subclass: #WindowTilingMorph
 	instanceVariableNames: 'mainWindow stack'
 	classVariableNames: ''
 	poolDictionaries: ''
@@ -208,7 +208,7 @@ windowLabel
 closeIcon
 	^ self cancelIcon! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 2/4/2024 20:12:49'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 5/7/2025 03:03:28'!
 initialize
 	super initialize.
 "
@@ -218,15 +218,8 @@ initialize
 	Preferences name: #showAssignmentAsLeftArrow category: #programming value: true.
 	
 	TrueTypeFontFamily readAllTrueTypeFontsIn: DirectoryEntry trueTypeFontsDirectory / 'DejaVu' / 'DejaVuSans'.
-	PreferenceSet
-		setDefaultFont: 'DejaVu Sans'
-		spec: #(
-			(standardListFont 15)
-			(standardMenuFont 15)
-			(windowTitleFont 13)
-			(standardCodeFont 15)
-			(standardButtonFont 15)).
-	DisplayScreen runningWorld ifNotNil: [ :world | world fontPreferenceChanged ].
+	PreferenceSet setDefaultFont: 'DejaVu Sans'.
+	PreferenceSet defaultFontSize: 18.
 "
 	Preferences
 		at: #biggerCursors put: false;
@@ -317,9 +310,10 @@ useUniformColors
 windowBorderWidth
 	^ 6! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:15'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 6/21/2025 16:34:41'!
 browser
-	^ Color lightGreen duller! !
+	^ `(Color fromHexString: '#00FFAB') duller`
+"	^ Color lightGreen duller"! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:47:12'!
 changeList
@@ -333,9 +327,13 @@ changeSorter
 debugger
 	^ Color lightRed darker! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 11/16/2015 02:16'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2025 15:24:56'!
+defaultButtonColor
+	^ self defaultWindowColor lighter lighter! !
+
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/29/2025 16:24:01'!
 defaultWindowColor
-	^ Color gray darker! !
+	^ `Color hue: 212 chroma: 0.015 luminance: 0.35`! !
 
 !DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 20:03:55'!
 fileContentsBrowser
@@ -583,22 +581,32 @@ handlesMouseHover
 handlesMouseOver: evt
 	^ true! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 1/25/2025 08:48:36'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/11/2025 18:22:14'!
 keyStroke: aKeyboardEvent morph: aMorph
 	"Handle global shortcuts. Return true if the event was handled, false otherwise."
 	"Global shortcuts should use command (Mac) / alt (PC) key.
 	Control key is reserved for normal shortcuts (local shortcuts, defined by a morph), except ctrl-esc for the world menu."
 
 	| i |
-	aKeyboardEvent controlKeyPressed ifTrue:
-		[aKeyboardEvent isEsc ifTrue: [self world mouseButton2Activity. ^true]. ^false]. "open world menu"
+"	aKeyboardEvent controlKeyPressed ifTrue:
+		[aKeyboardEvent isEsc ifTrue: [self world mouseButton2Activity. ^true]. ^false]." "open world menu"
 	aKeyboardEvent commandAltKeyPressed ifFalse: [^false].
+"	Transcript show: aKeyboardEvent; space; show: aKeyboardEvent keyValue; newLine."
 	aKeyboardEvent isEsc
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| w fullScreen. ^true]].
 	aKeyboardEvent keyCharacter = $w
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| w delete. ^true]].
 	aKeyboardEvent keyCharacter = $t
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| self windowToggleTiling: w. ^true]].
+"	aKeyboardEvent shiftPressed ifTrue:
+		[aKeyboardEvent keyValue = 1
+			ifTrue: [aMorph owningWindow ifNotNil: [:w| w resizeTop. ^true]].
+		aKeyboardEvent keyValue = 4
+			ifTrue: [aMorph owningWindow ifNotNil: [:w| w resizeBottom. ^true]].
+		aKeyboardEvent isArrowLeft
+			ifTrue: [aMorph owningWindow ifNotNil: [:w| w resizeLeft. ^true]].
+		aKeyboardEvent isArrowRight
+			ifTrue: [aMorph owningWindow ifNotNil: [:w| w resizeRight. ^true]]]."
 
 	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
 		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
@@ -676,7 +684,7 @@ step
 	newOwnerExtent _ owner morphExtent.
 	ownerExtent = newOwnerExtent ifFalse: [self updateBounds. ownerExtent _ newOwnerExtent]! !
 
-!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 1/28/2022 12:29:04'!
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/7/2025 16:21:04'!
 stepTime
 	^ 1000! !
 
@@ -732,7 +740,7 @@ windowsArea
 	self world ifNotNil: [:w| allowedArea _ allowedArea intersect: w viewBox].
 	^allowedArea! !
 
-!WindowManagerMorph class methodsFor: 'as yet unclassified' stamp: 'len 5/22/2020 08:33:15'!
+!WindowManagerMorph class methodsFor: 'accessing' stamp: 'len 5/22/2020 08:33:15'!
 current
 	^ Current! !
 
@@ -830,16 +838,24 @@ removeStack
 	stack delete.
 	stack _ nil! !
 
-!KeyboardEvent methodsFor: '*morphic-dwm-dispatching' stamp: 'len 3/24/2021 12:49:16'!
+!KeyboardEvent methodsFor: '*morphic-dwm-dispatching' stamp: 'len 9/7/2025 19:38:23'!
 sendEventTo: aMorph
-	"Dispatch the receiver into aMorph."
-	type == #keystroke
+	"Event dispatch finished. Deliver us straight to aMorph for execution."
+"
+Revisar senders de
+#definesKeyboardShortcuts.
+"
+	keyEventType == #keystroke
 		ifTrue:
-			[^ (WindowManagerMorph current ifNotNil: [:m| m keyStroke: self morph: aMorph] ifNil: [false])
-				ifFalse: [aMorph processKeystroke: self]].
-	type == #keyDown ifTrue: [^ aMorph processKeyDown: self].
-	type == #keyUp ifTrue: [^ aMorph processKeyUp: self].
-	^ super sendEventTo: aMorph! !
+			[WindowManagerMorph current ifNotNil: [:m| self wasHandled: (m keyStroke: self morph: aMorph)].
+			self wasHandled ifFalse: [aMorph processKeystroke: self].
+			^ self].
+	keyEventType == #keyDown ifTrue: [
+		aMorph processKeyDown: self.
+		^self ].
+	keyEventType == #keyUp ifTrue: [ 
+		aMorph processKeyUp: self.
+		^self ].! !
 
 !SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:23:07'!
 addWindowControlTo: aMenu
