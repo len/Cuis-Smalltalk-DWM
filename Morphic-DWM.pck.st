@@ -1,6 +1,6 @@
-'From Cuis7.5 [latest update: #7526] on 7 September 2025 at 7:40:32 pm'!
+'From Cuis7.7 [latest update: #7791] on 14 January 2026 at 12:49:44 pm'!
 'Description Dynamic tiling window manager for Cuis Smalltalk.'!
-!provides: 'Morphic-DWM' 1 90!
+!provides: 'Morphic-DWM' 1 100!
 SystemOrganization addCategory: #'Morphic-DWM'!
 
 
@@ -55,61 +55,61 @@ WindowTilingMorph class
 	instanceVariableNames: ''!
 
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:58'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 9/Jun/2016 17:58:00'!
 acceptButton
 	^ self successColor! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/13/2015 18:23'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 13/Nov/2015 18:23:00'!
 background
 	^ Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 5/25/2023 19:12:09'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 25/May/2023 19:12:09'!
 buttonColorFrom: paneColor
 	^ paneColor adjustSaturation: -0.03 brightness: -0.1! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:45'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 17/Nov/2015 23:45:00'!
 buttonLabel
 	^ Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:58'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 9/Jun/2016 17:58:00'!
 cancelButton
 	^ self errorColor! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:51'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 9/Jun/2016 17:51:00'!
 errorColor
 	^ Color lightRed! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 18:01'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 9/Jun/2016 18:01:00'!
 failureColor
 	^ Color yellow duller! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:11'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 17/Nov/2015 23:11:00'!
 focusIndicator
 	^ self textHighlight lighter! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:55'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 17/Nov/2015 03:55:00'!
 listMultiHighlightFocused: aBoolean
 	^ (self listHighlightFocused: aBoolean) 
 		adjustSaturation: 0.0 brightness: 0.15! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 12/27/2022 12:28:29'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 27/Dec/2022 12:28:29'!
 paneBackgroundFrom: aColor
 "	^ aColor adjustSaturation: 0 brightness: -0.7"
 	^ aColor alphaMixed: 0.14 with: Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:39'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 14/Nov/2015 02:39:00'!
 scrollbarButtonColor
 	^Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:58'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 17/Nov/2015 23:58:00'!
 scrollbarColor
 	^ Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/14/2015 02:36'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 14/Nov/2015 02:36:00'!
 scrollbarSliderShadowColor
 	^Color black! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 6/14/2023 13:06:53'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 14/Jun/2023 13:06:53'!
 shout
 	"
 	SHTextStylerST80 releaseClassCachedState
@@ -173,55 +173,58 @@ shout
 " 
 ! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 6/9/2016 17:57'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 9/Jun/2016 17:57:00'!
 successColor
 	^ Color lightGreen duller! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 03:57'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 17/Nov/2015 03:57:00'!
 text
 	^ Color white! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 6/14/2023 13:37:17'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 14/Jun/2023 13:37:17'!
 textAutoHighlight
 	self flag: #fixme. "this needs to change SHTextStylerST80>>#privateConvert to call it."
 	^ (Color colorFrom: '#FF005C') alpha: 0.5
 "	^ (Color colorFrom: '#ff2f8e') alpha: 0.5"
 "	^ (Color colorFrom: '#F0FF42') alpha: 0.3"! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 11/17/2015 23:10'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 17/Nov/2015 23:10:00'!
 textCursor
 	^ Color white! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 1/25/2025 08:33:08'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 25/Jan/2025 08:33:08'!
 textHighlight
 	^ Color gray "Color r: 0.2 g: 0.35 b: 0.45"! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 1/25/2025 08:34:16'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 25/Jan/2025 08:34:16'!
 unfocusedTextHighlightFrom: aColor
 	^aColor adjustSaturation: 0.0 brightness: -0.08! !
 
-!DWMTheme methodsFor: 'colors' stamp: 'len 3/26/2021 18:09:44'!
+!DWMTheme methodsFor: 'colors' stamp: 'len 26/Mar/2021 18:09:44'!
 windowLabel
 	^ `Color gray: 0.2`! !
 
-!DWMTheme methodsFor: 'icons' stamp: 'len 3/27/2021 06:02:22'!
+!DWMTheme methodsFor: 'icons' stamp: 'len 27/Mar/2021 06:02:22'!
 closeIcon
 	^ self cancelIcon! !
 
-!DWMTheme methodsFor: 'initialization' stamp: 'len 5/7/2025 03:03:28'!
+!DWMTheme methodsFor: 'initialization' stamp: 'len 12/Jan/2026 18:56:56'!
 initialize
 	super initialize.
 "
 	TTFontReader smalltalkAssignmentArrowGlyphCodePoint: 16r2B05.
 	TTFontReader smalltalkReturnArrowGlyphCodePoint: 16r2B06.
-	
-	Preferences name: #showAssignmentAsLeftArrow category: #programming value: true.
-	
 	TrueTypeFontFamily readAllTrueTypeFontsIn: DirectoryEntry trueTypeFontsDirectory / 'DejaVu' / 'DejaVuSans'.
+	
+	TrueTypeFontFamily readAllTrueTypeFontsIn: DirectoryEntry trueTypeFontsDirectory / 'JetBrainsMono'.
+	TrueTypeFontFamily readAllTrueTypeFontsIn: DirectoryEntry trueTypeFontsDirectory / 'Commodore 64'.
+
 	PreferenceSet setDefaultFont: 'DejaVu Sans'.
 	PreferenceSet defaultFontSize: 18.
 "
 	Preferences
+		at: #focusFollowsMouse put: true;
+		at: #showAssignmentAsLeftArrow put: true;
 		at: #biggerCursors put: false;
 		at: #dismissAllOnOptionClose put: true;
 		at: #subPixelRenderColorFonts put: true;
@@ -231,151 +234,153 @@ initialize
 		at: #showAnnotations put: true;
 		at: #usePreDebugWindow put: false.
 
+	PreferenceSet defaultFontSize: 18.
+
 	SHTextStylerST80 initialize.
 
 	Smalltalk garbageCollect.
 	WindowManagerMorph new openInWorld startStepping! !
 
-!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 17/Nov/2015 03:58:00'!
 menu
 	^ Color darkGray darker darker! !
 
-!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:58'!
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 17/Nov/2015 03:58:00'!
 menuText
 	^ Color white! !
 
-!DWMTheme methodsFor: 'menu colors' stamp: 'len 11/17/2015 03:59'!
+!DWMTheme methodsFor: 'menu colors' stamp: 'len 17/Nov/2015 03:59:00'!
 menuTitleBar
 	^ self menu darker! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 23:33:07'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 23:33:07'!
 buttonBorderWidth
 	^ 1! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 8/5/2022 08:26:40'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 5/Aug/2022 08:26:40'!
 buttonPaneHeight
 	"Answer the user's preferred default height for button panes."
 
 	^(Preferences at: #standardButtonFont) lineSpacing * 10 // 8! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:18:00'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 17:18:00'!
 embossedButtonLabels
 	^ false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:27:46'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 17:27:46'!
 embossedTitles
 	^ false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 01:23'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 16/Nov/2015 01:23:00'!
 fullScreenDeskMargin
 	^ 0! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 3/24/2021 15:19:57'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/Mar/2021 15:19:57'!
 layoutAdjusterThickness
 	^ 2! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 23:23:46'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 23:23:46'!
 roundButtons
 	^ true! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:26:06'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 17:26:06'!
 roundWindowCorners
 	^ true! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 23:51:17'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 23:51:17'!
 roundedButtonRadius
 	^ 4! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:26:43'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 17:26:43'!
 roundedWindowRadius
 	^6! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:19:14'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 17:19:14'!
 scrollbarShowButtons
 	^ false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 23:49:27'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 23:49:27'!
 scrollbarThickness
 	^ 16! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/16/2015 00:10'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 16/Nov/2015 00:10:00'!
 useTaskbar
 	^false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 11/17/2015 22:36'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 17/Nov/2015 22:36:00'!
 useUniformColors
 	^false! !
 
-!DWMTheme methodsFor: 'other options' stamp: 'len 5/24/2023 17:09:29'!
+!DWMTheme methodsFor: 'other options' stamp: 'len 24/May/2023 17:09:29'!
 windowBorderWidth
 	^ 6! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 6/21/2025 16:34:41'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 13/Dec/2025 15:26:11'!
 browser
 	^ `(Color fromHexString: '#00FFAB') duller`
 "	^ Color lightGreen duller"! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:47:12'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 19:47:12'!
 changeList
 	^ Color lightCyan duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:26:06'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 19:26:06'!
 changeSorter
 	^ Color lightCyan duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/22/2020 18:08:30'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 22/May/2020 18:08:30'!
 debugger
 	^ Color lightRed darker! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/24/2025 15:24:56'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 24/May/2025 15:24:56'!
 defaultButtonColor
 	^ self defaultWindowColor lighter lighter! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/29/2025 16:24:01'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 29/May/2025 16:24:01'!
 defaultWindowColor
 	^ `Color hue: 212 chroma: 0.015 luminance: 0.35`! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 20:03:55'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 20:03:55'!
 fileContentsBrowser
 	^ Color tan! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:21:54'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 19:21:54'!
 fileList
 	^ Color lightMagenta duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:27'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 19:56:27'!
 messageNames
 	^ Color lightBlue duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:56:35'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 19:56:35'!
 messageSet
 	^ Color lightBlue duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 20:03:15'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 20:03:15'!
 packageList
 	^ Color tan! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 20:06:47'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 20:06:47'!
 testRunner
 	^ Color blue quiteWhiter duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 6/25/2016 20:25'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 25/Jun/2016 20:25:00'!
 transcript
 	^ Color lightOrange! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:35:48'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 19:35:48'!
 versionsBrowser
 	^ Color pink whiter duller! !
 
-!DWMTheme methodsFor: 'tool colors' stamp: 'len 5/26/2020 19:42:16'!
+!DWMTheme methodsFor: 'tool colors' stamp: 'len 26/May/2020 19:42:16'!
 workspace
 	^ Color lightYellow duller! !
 
-!DWMTheme methodsFor: 'widget colors' stamp: 'len 11/13/2015 19:11'!
+!DWMTheme methodsFor: 'widget colors' stamp: 'len 13/Nov/2015 19:11:00'!
 textPane
 	^ Color black! !
 
-!DWMTheme methodsFor: 'private - shout mappings' stamp: 'len 12/18/2022 09:57:31'!
+!DWMTheme methodsFor: 'private - shout mappings' stamp: 'len 18/Dec/2022 09:57:31'!
 generateShoutConfig
 
 	| styles colors |
@@ -431,22 +436,22 @@ generateShoutConfig
 
 	^ styles! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 5/5/2018 19:08:29'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 5/May/2018 19:08:29'!
 flash
 	tilingMorph ifNotNil: [:aMorph| aMorph world ifNotNil: [:aWorld| aWorld flash. ^ self]].
 	windows do: [:each| each world ifNotNil: [:aWorld| aWorld flash. ^ self]]! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 7/10/2016 08:52'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 10/Jul/2016 08:52:00'!
 hide
 	tilingMorph notNil ifTrue: [tilingMorph visible: false].
 	windows do: [:each | (each owner notNil and: [each isReallyVisible]) ifTrue: [each removeHalo; visible: false]]! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 11/17/2015 02:50'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 17/Nov/2015 02:50:00'!
 show
 	tilingMorph notNil ifTrue: [tilingMorph visible: true].
 	windows do: [:each | each visible ifFalse: [each visible: true]]! !
 
-!WindowManagerPage methodsFor: 'actions' stamp: 'len 1/25/2025 08:29:47'!
+!WindowManagerPage methodsFor: 'actions' stamp: 'len 25/Jan/2025 08:29:47'!
 windowToggleTiling: aSystemWindow windowsArea: windowsArea
 	| possibleBounds |
 	aSystemWindow isInWorld ifFalse: [^ self].
@@ -468,52 +473,52 @@ windowToggleTiling: aSystemWindow windowsArea: windowsArea
 	tilingMorph refresh.
 	tilingMorph hasSubmorphs ifFalse: [tilingMorph delete. tilingMorph := nil]! !
 
-!WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 23:05'!
+!WindowManagerPage methodsFor: 'events' stamp: 'len 17/Nov/2015 23:05:00'!
 windowClosed: aSystemWindow
 	windows remove: aSystemWindow ifAbsent: [].
 	self refresh! !
 
-!WindowManagerPage methodsFor: 'events' stamp: 'len 11/17/2015 02:28'!
+!WindowManagerPage methodsFor: 'events' stamp: 'len 17/Nov/2015 02:28:00'!
 windowOpen: aSystemWindow
 	windows add: aSystemWindow.
 	self refresh! !
 
-!WindowManagerPage methodsFor: 'initialization' stamp: 'len 5/22/2020 09:15:31'!
+!WindowManagerPage methodsFor: 'initialization' stamp: 'len 22/May/2020 09:15:31'!
 delete
 	tilingMorph ifNotNil: [tilingMorph delete. tilingMorph _ nil]! !
 
-!WindowManagerPage methodsFor: 'initialization' stamp: 'len 11/16/2015 15:00'!
+!WindowManagerPage methodsFor: 'initialization' stamp: 'len 16/Nov/2015 15:00:00'!
 initialize
 	windows _ OrderedCollection new! !
 
-!WindowManagerPage methodsFor: 'printing' stamp: 'len 11/16/2015 15:36'!
+!WindowManagerPage methodsFor: 'printing' stamp: 'len 16/Nov/2015 15:36:00'!
 printOn: aStream
 	aStream nextPut: $[.
 	windows do: [:each | aStream print: each] separatedBy: [aStream nextPutAll: '; '].
 	aStream nextPut: $]! !
 
-!WindowManagerPage methodsFor: 'testing' stamp: 'len 5/3/2018 21:06:42'!
+!WindowManagerPage methodsFor: 'testing' stamp: 'len 3/May/2018 21:06:42'!
 isEmpty
 	^ windows isEmpty! !
 
-!WindowManagerPage methodsFor: 'private' stamp: 'len 11/17/2015 02:30'!
+!WindowManagerPage methodsFor: 'private' stamp: 'len 17/Nov/2015 02:30:00'!
 refresh
 	tilingMorph isNil ifTrue: [^ self].
 	tilingMorph refresh.
 	tilingMorph hasSubmorphs ifFalse: [tilingMorph delete].
 	tilingMorph isInWorld ifFalse: [tilingMorph _ nil]! !
 
-!WindowManagerPage methodsFor: 'private' stamp: 'len 5/22/2020 09:02:53'!
+!WindowManagerPage methodsFor: 'private' stamp: 'len 22/May/2020 09:02:53'!
 updateBounds
 	self runningWorld submorphs do: [:one| (one isKindOf: WindowManagerMorph) ifTrue: [^ self updateBounds: one windowsArea]]! !
 
-!WindowManagerPage methodsFor: 'private' stamp: 'len 1/25/2025 08:29:33'!
+!WindowManagerPage methodsFor: 'private' stamp: 'len 25/Jan/2025 08:29:33'!
 updateBounds: windowsArea
 	tilingMorph ifNotNil: [tilingMorph position: windowsArea topLeft extent: windowsArea extent].
 	windows do: [:each| (each hasProperty: #originalBounds) ifTrue: [each position: windowsArea topLeft extent: windowsArea extent]]
 ! !
 
-!WindowManagerMorph methodsFor: 'actions' stamp: 'len 5/22/2020 10:33:53'!
+!WindowManagerMorph methodsFor: 'actions' stamp: 'len 22/May/2020 10:33:53'!
 moveWindow: aSystemWindow toPage: anInteger
 	| newPage |
 	newPage _ pages at: anInteger.
@@ -528,7 +533,7 @@ moveWindow: aSystemWindow toPage: anInteger
 	self step.
 	self redrawNeeded! !
 
-!WindowManagerMorph methodsFor: 'actions' stamp: 'len 5/22/2020 10:33:39'!
+!WindowManagerMorph methodsFor: 'actions' stamp: 'len 22/May/2020 10:33:39'!
 switchToPage: anInteger
 	| newPage |
 	newPage _ pages at: anInteger.
@@ -540,11 +545,11 @@ switchToPage: anInteger
 	self step.
 	self redrawNeeded! !
 
-!WindowManagerMorph methodsFor: 'actions' stamp: 'len 6/6/2023 08:15:22'!
+!WindowManagerMorph methodsFor: 'actions' stamp: 'len 6/Jun/2023 08:15:22'!
 windowToggleTiling: aSystemWIndow
 	currentPage windowToggleTiling: aSystemWIndow windowsArea: self windowsArea! !
 
-!WindowManagerMorph methodsFor: 'drawing' stamp: 'len 1/25/2025 08:22:37'!
+!WindowManagerMorph methodsFor: 'drawing' stamp: 'len 25/Jan/2025 08:22:37'!
 drawOn: aCanvas
 	| font w rect |
 	aCanvas fillRectangle: self localBounds color: (Color white alpha: 0.15).
@@ -569,19 +574,19 @@ drawOn: aCanvas
 			font: font
 			color: Color black]"! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 08:33:14'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/Jun/2023 08:33:14'!
 handlesMouseDown: evt
 	^ true! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 12:46:57'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/Jun/2023 12:46:57'!
 handlesMouseHover
 	^ true! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 12:38:16'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/Jun/2023 12:38:16'!
 handlesMouseOver: evt
 	^ true! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/11/2025 18:22:14'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 14/Jan/2026 12:42:52'!
 keyStroke: aKeyboardEvent morph: aMorph
 	"Handle global shortcuts. Return true if the event was handled, false otherwise."
 	"Global shortcuts should use command (Mac) / alt (PC) key.
@@ -596,7 +601,7 @@ keyStroke: aKeyboardEvent morph: aMorph
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| w fullScreen. ^true]].
 	aKeyboardEvent keyCharacter = $w
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| w delete. ^true]].
-	aKeyboardEvent keyCharacter = $t
+	aKeyboardEvent keyCharacter = $`
 		ifTrue: [aMorph owningWindow ifNotNil: [:w| self windowToggleTiling: w. ^true]].
 "	aKeyboardEvent shiftPressed ifTrue:
 		[aKeyboardEvent keyValue = 1
@@ -606,7 +611,7 @@ keyStroke: aKeyboardEvent morph: aMorph
 		aKeyboardEvent isArrowLeft
 			ifTrue: [aMorph owningWindow ifNotNil: [:w| w resizeLeft. ^true]].
 		aKeyboardEvent isArrowRight
-			ifTrue: [aMorph owningWindow ifNotNil: [:w| w resizeRight. ^true]]]."
+¡™£¡			ifTrue: [aMorph owningWindow ifNotNil: [:w| w resizeRight. ^true]]]."
 
 	(aKeyboardEvent keyValue between: $1 asciiValue and: $8 asciiValue)
 		ifTrue: [self switchToPage: aKeyboardEvent keyValue - $1 asciiValue + 1. ^true].
@@ -618,8 +623,8 @@ keyStroke: aKeyboardEvent morph: aMorph
 		ifTrue: [Browser open. ^true].
 	aKeyboardEvent keyCharacter = $W
 		ifTrue: [Workspace open. ^true].
-	aKeyboardEvent keyCharacter = $T
-		ifTrue: [Transcript open. ^true].
+"	aKeyboardEvent keyCharacter = $T
+		ifTrue: [Transcript open. ^true]."
 	aKeyboardEvent keyCharacter = $P
 		ifTrue: [CodePackageList open. ^true].
 	aKeyboardEvent keyCharacter = $F
@@ -632,25 +637,25 @@ keyStroke: aKeyboardEvent morph: aMorph
 		ifTrue: [MessageNames open. ^true].
 	^ false! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 08:32:04'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/Jun/2023 08:32:04'!
 mouseButton1Up: aMouseButtonEvent localPosition: localEventPosition
 	| pageNumber |
 	pageNumber := (localEventPosition x // self font lineSpacing) rounded + 1.
 	(pageNumber between: 1 and: 8) ifTrue: [self switchToPage: pageNumber]! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 12:57:16'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/Jun/2023 12:57:16'!
 mouseHover: aMouseMoveEvent localPosition: localEventPosition
 	| i |
 	((i := (localEventPosition x // self defaultHeight + 1) rounded) between: 1 and: 8) ifTrue:
 		[highlightedPage := i.
 		self redrawNeeded].! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/6/2023 12:54:23'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 6/Jun/2023 12:54:23'!
 mouseLeave: evt
 	highlightedPage := nil.
 	self redrawNeeded! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 5/22/2020 08:43:45'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 22/May/2020 08:43:45'!
 windowClosed: aSystemWindow
 	currentPage windowClosed: aSystemWindow.
 "	currentPage isEmpty ifTrue:
@@ -659,36 +664,36 @@ windowClosed: aSystemWindow
 		(currentIndex - 1 to: 1 by: -1), (currentIndex + 1 to: pages size)
 			do: [:i| (pages at: i) isEmpty ifFalse: [^ self switchToPage: i]]]"! !
 
-!WindowManagerMorph methodsFor: 'events' stamp: 'len 1/28/2022 12:33:32'!
+!WindowManagerMorph methodsFor: 'events' stamp: 'len 28/Jan/2022 12:33:32'!
 windowOpen: aSystemWindow
 	currentPage windowOpen: aSystemWindow.
 "	aSystemWindow addHalo"! !
 
-!WindowManagerMorph methodsFor: 'initialization' stamp: 'len 1/25/2025 08:23:08'!
+!WindowManagerMorph methodsFor: 'initialization' stamp: 'len 25/Jan/2025 08:23:08'!
 initialize
 	super initialize.
 	pages := (1 to: 8) collect: [:each | WindowManagerPage new].
 	currentPage := pages first! !
 
-!WindowManagerMorph methodsFor: 'initialization' stamp: 'len 5/22/2020 09:15:01'!
+!WindowManagerMorph methodsFor: 'initialization' stamp: 'len 22/May/2020 09:15:01'!
 reset
 	pages do: [:each| each delete].
 	pages _ (1 to: 8) collect: [:each | WindowManagerPage new].
 	currentPage _ pages first.
 	SystemWindow allSubInstances do: [:each|each isInWorld ifTrue: [self addWindow: each]]! !
 
-!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 1/28/2022 15:41:29'!
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 28/Jan/2022 15:41:29'!
 step
 	| newOwnerExtent |
 	self comeToFront.
 	newOwnerExtent _ owner morphExtent.
 	ownerExtent = newOwnerExtent ifFalse: [self updateBounds. ownerExtent _ newOwnerExtent]! !
 
-!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 5/7/2025 16:21:04'!
+!WindowManagerMorph methodsFor: 'stepping' stamp: 'len 7/May/2025 16:21:04'!
 stepTime
 	^ 1000! !
 
-!WindowManagerMorph methodsFor: 'submorphs-accessing' stamp: 'len 1/28/2022 15:40:05'!
+!WindowManagerMorph methodsFor: 'submorphs-accessing' stamp: 'len 28/Jan/2022 15:40:05'!
 noteNewOwner: aMorph
 	"I have just been added as a submorph of aMorph"
 	Current ifNotNil: [:m| Current delete].
@@ -697,33 +702,33 @@ noteNewOwner: aMorph
 	self reset.
 	self updateBounds! !
 
-!WindowManagerMorph methodsFor: 'submorphs-add/remove' stamp: 'len 1/28/2022 15:39:38'!
+!WindowManagerMorph methodsFor: 'submorphs-add/remove' stamp: 'len 28/Jan/2022 15:39:38'!
 delete
 	pages do: [:each| each delete].
 	super delete.
 	Current == self ifTrue: [Current _ nil]! !
 
-!WindowManagerMorph methodsFor: 'testing' stamp: 'len 5/19/2020 12:23:50'!
+!WindowManagerMorph methodsFor: 'testing' stamp: 'len 19/May/2020 12:23:50'!
 isSticky
 	^true! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 08:41:44'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 22/May/2020 08:41:44'!
 addWindow: aSystemWindow
 	currentPage windowOpen: aSystemWindow! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/22/2020 07:53:35'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 22/May/2020 07:53:35'!
 defaultHeight
 	^ self font lineSpacing! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 6/6/2023 08:39:35'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 6/Jun/2023 08:39:35'!
 defaultWidth
 	^ self defaultHeight * 8 + 2! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 6/6/2023 12:57:48'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 6/Jun/2023 12:57:48'!
 font
 	^ (FontFamily familyNamed: FontFamily defaultFamilyName) atPointSize: 16! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 1/25/2025 08:24:40'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 25/Jan/2025 08:24:40'!
 updateBounds
 	| world newPosition area |
 	world := self world ifNil: [^ self].
@@ -733,77 +738,77 @@ updateBounds
 	area := self windowsArea.
 	pages do: [:each| each updateBounds: area]! !
 
-!WindowManagerMorph methodsFor: 'private' stamp: 'len 5/25/2020 08:07:35'!
+!WindowManagerMorph methodsFor: 'private' stamp: 'len 25/May/2020 08:07:35'!
 windowsArea
 	| allowedArea |
 	allowedArea _ Display boundingBox.
 	self world ifNotNil: [:w| allowedArea _ allowedArea intersect: w viewBox].
 	^allowedArea! !
 
-!WindowManagerMorph class methodsFor: 'accessing' stamp: 'len 5/22/2020 08:33:15'!
+!WindowManagerMorph class methodsFor: 'accessing' stamp: 'len 22/May/2020 08:33:15'!
 current
 	^ Current! !
 
-!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:14'!
+!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 18/Nov/2015 03:14:00'!
 privateAddMorph: aMorph atIndex: anInteger
 	aMorph owner == self ifTrue: [^ self].
 	super privateAddMorph: aMorph atIndex: anInteger! !
 
-!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:15:44'!
+!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 24/Mar/2021 15:15:44'!
 privateMoveFrontMorph: aMorph
 	aMorph owner == self ifTrue: [^ self].
 	^ super privateMoveFrontMorph: aMorph! !
 
-!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:57'!
+!WindowStackMorph methodsFor: 'submorphs-add/remove' stamp: 'len 17/Nov/2015 05:57:00'!
 removedMorph: aMorph
 	super removedMorph: aMorph.
 "	owner notNil ifTrue: [owner stackChanged]."
 	self layoutSubmorphs! !
 
-!WindowTilingMorph methodsFor: 'initialization' stamp: 'len 11/19/2015 07:24'!
+!WindowTilingMorph methodsFor: 'initialization' stamp: 'len 10/Dec/2025 14:38:28'!
 initialize
 	super initialize.
 	self sticky: true! !
 
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:58'!
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 17/Nov/2015 05:58:00'!
 addMorphBack: aMorph
 	aMorph owner == self ifTrue: [^ self].
 	^ super addMorphBack: aMorph! !
 
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 04:31'!
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 17/Nov/2015 04:31:00'!
 addMorphFront: aMorph
 	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
 	^ super addMorphFront: aMorph! !
 
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/16/2015 05:45'!
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 16/Nov/2015 05:45:00'!
 addWindow: aSystemWindow
 	aSystemWindow layoutSpec: (LayoutSpec proportionalWidth: 1 proportionalHeight: 1).
 	self addMorphBack: aSystemWindow.
 	mainWindow notNil ifTrue: [self pushWindow].
 	mainWindow _ aSystemWindow.! !
 
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/18/2015 03:15'!
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 18/Nov/2015 03:15:00'!
 privateAddMorph: aMorph atIndex: anInteger
 	aMorph owner == self ifTrue: [^ self].
 	super privateAddMorph: aMorph atIndex: anInteger! !
 
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:14:40'!
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 24/Mar/2021 15:14:40'!
 privateMoveBackMorph: aMorph
 	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
 	^ super privateMoveBackMorph: aMorph! !
 
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 3/24/2021 15:14:02'!
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 24/Mar/2021 15:14:02'!
 privateMoveFrontMorph: aMorph
 	aMorph owner == self ifTrue: [^ self]. "we do this to avoid system windows to come to front (and change the desired order wrt the stack) when clicking on them"
 	^ super privateMoveFrontMorph: aMorph! !
 
-!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 11/17/2015 05:56'!
+!WindowTilingMorph methodsFor: 'submorphs-add/remove' stamp: 'len 17/Nov/2015 05:56:00'!
 removedMorph: aMorph
 	aMorph == mainWindow
 		ifTrue: [mainWindow _ nil]
 		ifFalse: [aMorph == stack ifTrue: [stack _ nil]]! !
 
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 13:45'!
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 16/Nov/2015 13:45:00'!
 popWindow
 	"There's no main window, pop a window from the stack and set it as main window."
 	stack isNil ifTrue: [^ self].
@@ -812,33 +817,33 @@ popWindow
 	self addMorphBack: mainWindow.
 	stack hasSubmorphs ifFalse: [self removeStack]! !
 
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/17/2015 03:35'!
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 10/Dec/2025 14:36:37'!
 pushWindow
 	"Make room available for a new main window. Push the current main window to the stack."
 	mainWindow isNil ifTrue: [^ self].
 	stack isNil
 		ifTrue:
-			[stack _ direction == #vertical
+			[stack := layoutObject isColumn
 				ifTrue: [WindowStackMorph newRow layoutSpec: (LayoutSpec proportionalWidth: 1 proportionalHeight: 1); yourself]
 				ifFalse: [WindowStackMorph newColumn layoutSpec: (LayoutSpec proportionalWidth: 0.8 proportionalHeight: 1); yourself].
 			stack color: self color.
 			self addMorphFront: stack].
 	stack addMorphBack: mainWindow! !
 
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 5/22/2020 09:13:49'!
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 22/May/2020 09:13:49'!
 refresh
 	mainWindow isNil ifTrue: [self popWindow].
 	stack isNil ifFalse: [stack hasSubmorphs not ifTrue: [self removeStack]].
 	stack isNil ifFalse: [stack layoutSubmorphs].
 	self layoutSubmorphs! !
 
-!WindowTilingMorph methodsFor: 'private' stamp: 'len 11/16/2015 04:38'!
+!WindowTilingMorph methodsFor: 'private' stamp: 'len 16/Nov/2015 04:38:00'!
 removeStack
 	stack isNil ifTrue: [^ self].
 	stack delete.
 	stack _ nil! !
 
-!KeyboardEvent methodsFor: '*morphic-dwm-dispatching' stamp: 'len 9/7/2025 19:38:23'!
+!KeyboardEvent methodsFor: '*morphic-dwm-dispatching' stamp: 'len 10/Jan/2026 22:06:01'!
 sendEventTo: aMorph
 	"Event dispatch finished. Deliver us straight to aMorph for execution."
 "
@@ -857,7 +862,7 @@ Revisar senders de
 		aMorph processKeyUp: self.
 		^self ].! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:23:07'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/Jun/2023 08:23:07'!
 addWindowControlTo: aMenu
 
 	aMenu
@@ -875,7 +880,7 @@ addWindowControlTo: aMenu
 		
 	^aMenu! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:10:30'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/Jun/2023 08:10:30'!
 buildWindowMenu
 
 	| aMenu |
@@ -897,7 +902,7 @@ buildWindowMenu
 
 	^ aMenu! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:24:07'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/Jun/2023 08:24:07'!
 createCloseButton
 	^ (PluggableButtonMorph model: self action: #closeBoxHit)
 		iconDrawSelector: #drawCloseIcon;
@@ -906,7 +911,7 @@ createCloseButton
 		color: Color transparent;
 		borderWidth: 0! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:25:07'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/Jun/2023 08:25:07'!
 createExpandButton
 	^ (PluggableButtonMorph model: self action: #expandBoxHit)
 		iconDrawSelector: #drawExpandIcon;
@@ -915,7 +920,7 @@ createExpandButton
 		color: Color transparent;
 		borderWidth: 0! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:25:17'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/Jun/2023 08:25:17'!
 createTileButton
 	^(PluggableButtonMorph model: self action: #toggleTiling)
 		iconDrawSelector: #drawCollapseIcon;
@@ -924,7 +929,7 @@ createTileButton
 		color: Color transparent;
 		borderWidth: 0! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 08:59:41'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 22/May/2020 08:59:41'!
 delete
 	| thisWorld |
 	(self canDiscardEditsOf: self) ifFalse: [^self].
@@ -936,7 +941,7 @@ delete
 	self model: nil.
 	WindowManagerMorph current ifNotNil: [:m| m windowClosed: self]! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:22:15'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/Jun/2023 08:22:15'!
 initializeLabelArea
 	"Initialize the label area (titlebar) for the window."
 
@@ -948,7 +953,7 @@ initializeLabelArea
 	self addMorph: self createExpandButton position: spacing*2@0 + topLeft.
 	self addMorph: self createMenuButton position: spacing*3@0 + topLeft! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 5/22/2020 09:00:26'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 22/May/2020 09:00:26'!
 openInWorld
 	"Ensure all widgets have proper colors before opening"
 	Theme current widgetsColorFromToolColor ifTrue: [
@@ -956,10 +961,15 @@ openInWorld
 	super openInWorld.
 	WindowManagerMorph current ifNotNil: [:m| m windowOpen: self]! !
 
-!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/6/2023 08:19:17'!
+!SystemWindow methodsFor: '*morphic-dwm' stamp: 'len 6/Jun/2023 08:19:17'!
 toggleTiling
 	WindowManagerMorph current ifNotNil: [:m| m windowToggleTiling: self]! !
 
-!RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'len 5/30/2020 16:27:52'!
+!WorldMorph methodsFor: '*morphic-dwm' stamp: 'len 12/Jan/2026 16:17:52'!
+menuNshortcutsSpecsDo: aBlock
+	"Disable world shortcuts."
+	^ self! !
+
+!RealEstateAgent class methodsFor: '*morphic-dwm' stamp: 'len 30/May/2020 16:27:52'!
 screenTopSetback
 	^ 16! !
